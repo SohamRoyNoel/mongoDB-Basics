@@ -1,0 +1,188 @@
+$currentDate	Sets the value of a field to current date, either as a Date or a Timestamp.
+$inc		Increments the value of the field by the specified amount.
+$min		Only updates the field if the specified value is less than the existing field value.
+$max		Only updates the field if the specified value is greater than the existing field value.
+$mul		Multiplies the value of the field by the specified amount.
+$rename		Renames a field.
+$set		Sets the value of a field in a document.
+$setOnInsert	Sets the value of a field if an update results in an insert of a document. Has no effect on update operations that modify existing documents.
+$unset		Removes the specified field from a document.
+***************************************************************************************************************************************************
+> db.inventory.find()
+> use test
+switched to db test
+******************************************************************************************************************************************
+DATABASE
+******************************************************************************************************************************************
+> db.inventory.find()
+{ "_id" : ObjectId("5a6232e2691f1de4b36468bf"), "item" : "journal", "status" : "X", "size" : { "h" : 14, "w" : 21, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c0"), "item" : "notebook", "status" : "A", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ { "warehouse" : "C", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c1"), "item" : "paper", "status" : "D", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ { "warehouse" : "A", "qty" : 60 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c2"), "item" : "planner", "status" : "D", "size" : { "h" : 22.85, "w" : 30, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 40 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c3"), "item" : "postcard", "status" : "A", "size" : { "h" : 10, "w" : 15.25, "uom" : "cm" }, "instock" : [ { "warehouse" : "B", "qty" : 15 }, { "warehouse" : "C", "qty" : 35 } ] }
+******************************************************************************************************************************************
+UPDATEONE - any particular row value
+******************************************************************************************************************************************
+> db.inventory.updateOne({"item":"paper"},{$set:{"status":"F"}})
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+******************************************************************************************************************************************
+UPDATEONE - any array value
+******************************************************************************************************************************************
+> db.inventory.updateOne({"item":"paper"},{$set:{"size":{"h":10, "w":10, "uom":"PP"}}})
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+******************************************************************************************************************************************
+> db.inventory.find()
+{ "_id" : ObjectId("5a6232e2691f1de4b36468bf"), "item" : "journal", "status" : "X", "size" : { "h" : 14, "w" : 21, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c0"), "item" : "notebook", "status" : "A", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ { "warehouse" : "C", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c1"), "item" : "paper", "status" : "F", "size" : { "h" : 10, "w" : 10, "uom" : "PP" }, "instock" : [ { "warehouse" : "A", "qty" : 60 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c2"), "item" : "planner", "status" : "D", "size" : { "h" : 22.85, "w" : 30, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 40 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c3"), "item" : "postcard", "status" : "A", "size" : { "h" : 10, "w" : 15.25, "uom" : "cm" }, "instock" : [ { "warehouse" : "B", "qty" : 15 }, { "warehouse" : "C", "qty" : 35 } ] }
+******************************************************************************************************************************************
+$rename
+******************************************************************************************************************************************
+> db.inventory.updateOne({"item":"paper"},{$rename:{"size":"SIZE"}})
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+************************************************
+> db.inventory.find()
+{ "_id" : ObjectId("5a6232e2691f1de4b36468bf"), "item" : "journal", "status" : "X", "size" : { "h" : 14, "w" : 21, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c0"), "item" : "notebook", "status" : "A", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ { "warehouse" : "C", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c1"), "item" : "paper", "status" : "F", "instock" : [ { "warehouse" : "A", "qty" : 60 } ], "SIZE" : { "h" : 10, "w" : 10, "uom" : "PP" } }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c2"), "item" : "planner", "status" : "D", "size" : { "h" : 22.85, "w" : 30, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 40 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c3"), "item" : "postcard", "status" : "A", "size" : { "h" : 10, "w" : 15.25, "uom" : "cm" }, "instock" : [ { "warehouse" : "B", "qty" : 15 }, { "warehouse" : "C", "qty" : 35 } ] }
+******************************************************************************************************************************************
+$min
+******************************************************************************************************************************************
+> db.inventory.updateOne({"item":"paper"}, {$min:{"size.h":12}})
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+*************************************************************************
+> db.inventory.find()
+{ "_id" : ObjectId("5a6232e2691f1de4b36468bf"), "item" : "journal", "status" : "X", "size" : { "h" : 14, "w" : 21, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c0"), "item" : "notebook", "status" : "A", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ { "warehouse" : "C", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c1"), "item" : "paper", "status" : "F", "instock" : [ { "warehouse" : "A", "qty" : 60 } ], "SIZE" : { "h" : 10, "w" : 10, "uom" : "PP" }, "size" : { "h" : 12 } }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c2"), "item" : "planner", "status" : "D", "size" : { "h" : 22.85, "w" : 30, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 40 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c3"), "item" : "postcard", "status" : "A", "size" : { "h" : 10, "w" : 15.25, "uom" : "cm" }, "instock" : [ { "warehouse" : "B", "qty" : 15 }, { "warehouse" : "C", "qty" : 35 } ] }
+******************************************************************************************************************************************
+$min
+******************************************************************************************************************************************
+> db.inventory.updateOne({"item":"journal"}, {$min:{"size.h":12}})
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+****************************************************************************
+> db.inventory.find()
+{ "_id" : ObjectId("5a6232e2691f1de4b36468bf"), "item" : "journal", "status" : "X", "size" : { "h" : 12, "w" : 21, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c0"), "item" : "notebook", "status" : "A", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ { "warehouse" : "C", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c1"), "item" : "paper", "status" : "F", "instock" : [ { "warehouse" : "A", "qty" : 60 } ], "SIZE" : { "h" : 10, "w" : 10, "uom" : "PP" }, "size" : { "h" : 12 } }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c2"), "item" : "planner", "status" : "D", "size" : { "h" : 22.85, "w" : 30, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 40 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c3"), "item" : "postcard", "status" : "A", "size" : { "h" : 10, "w" : 15.25, "uom" : "cm" }, "instock" : [ { "warehouse" : "B", "qty" : 15 }, { "warehouse" : "C", "qty" : 35 } ] }
+******************************************************************************************************************************************
+$min works only when THE GIVEN value is less than THE PREVIOUS VALUE
+******************************************************************************************************************************************
+> db.inventory.updateOne({"item":"journal"}, {$min:{"size.h":15}})
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 0 }
+******************************************************************************
+> db.inventory.find()
+{ "_id" : ObjectId("5a6232e2691f1de4b36468bf"), "item" : "journal", "status" : "X", "size" : { "h" : 12, "w" : 21, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c0"), "item" : "notebook", "status" : "A", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ { "warehouse" : "C", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c1"), "item" : "paper", "status" : "F", "instock" : [ { "warehouse" : "A", "qty" : 60 } ], "SIZE" : { "h" : 10, "w" : 10, "uom" : "PP" }, "size" : { "h" : 12 } }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c2"), "item" : "planner", "status" : "D", "size" : { "h" : 22.85, "w" : 30, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 40 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c3"), "item" : "postcard", "status" : "A", "size" : { "h" : 10, "w" : 15.25, "uom" : "cm" }, "instock" : [ { "warehouse" : "B", "qty" : 15 }, { "warehouse" : "C", "qty" : 35 } ] }
+******************************************************************************************************************************************
+$max
+******************************************************************************************************************************************
+> db.inventory.updateOne({"item":"journal"}, {$max:{"size.h":15}})
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+**********************************************************************************
+> db.inventory.find()
+{ "_id" : ObjectId("5a6232e2691f1de4b36468bf"), "item" : "journal", "status" : "X", "size" : { "h" : 15, "w" : 21, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c0"), "item" : "notebook", "status" : "A", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ { "warehouse" : "C", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c1"), "item" : "paper", "status" : "F", "instock" : [ { "warehouse" : "A", "qty" : 60 } ], "SIZE" : { "h" : 10, "w" : 10, "uom" : "PP" }, "size" : { "h" : 12 } }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c2"), "item" : "planner", "status" : "D", "size" : { "h" : 22.85, "w" : 30, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 40 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c3"), "item" : "postcard", "status" : "A", "size" : { "h" : 10, "w" : 15.25, "uom" : "cm" }, "instock" : [ { "warehouse" : "B", "qty" : 15 }, { "warehouse" : "C", "qty" : 35 } ] }
+******************************************************************************************************************************************
+$min works only when THE GIVEN value is greater than THE PREVIOUS VALUE
+******************************************************************************************************************************************
+> db.inventory.updateOne({"item":"journal"}, {$max:{"size.h":10}})
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 0 }
+************************************************************************************
+> db.inventory.find()
+{ "_id" : ObjectId("5a6232e2691f1de4b36468bf"), "item" : "journal", "status" : "X", "size" : { "h" : 15, "w" : 21, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c0"), "item" : "notebook", "status" : "A", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ { "warehouse" : "C", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c1"), "item" : "paper", "status" : "F", "instock" : [ { "warehouse" : "A", "qty" : 60 } ], "SIZE" : { "h" : 10, "w" : 10, "uom" : "PP" }, "size" : { "h" : 12 } }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c2"), "item" : "planner", "status" : "D", "size" : { "h" : 22.85, "w" : 30, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 40 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c3"), "item" : "postcard", "status" : "A", "size" : { "h" : 10, "w" : 15.25, "uom" : "cm" }, "instock" : [ { "warehouse" : "B", "qty" : 15 }, { "warehouse" : "C", "qty" : 35 } ] }
+******************************************************************************************************************************************
+$mul
+******************************************************************************************************************************************
+> db.inventory.updateOne({"item":"journal"}, {$mul:{"size.h":2}})
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+*************************************************************************************
+> db.inventory.find()
+{ "_id" : ObjectId("5a6232e2691f1de4b36468bf"), "item" : "journal", "status" : "X", "size" : { "h" : 30, "w" : 21, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c0"), "item" : "notebook", "status" : "A", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ { "warehouse" : "C", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c1"), "item" : "paper", "status" : "F", "instock" : [ { "warehouse" : "A", "qty" : 60 } ], "SIZE" : { "h" : 10, "w" : 10, "uom" : "PP" }, "size" : { "h" : 12 } }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c2"), "item" : "planner", "status" : "D", "size" : { "h" : 22.85, "w" : 30, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 40 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c3"), "item" : "postcard", "status" : "A", "size" : { "h" : 10, "w" : 15.25, "uom" : "cm" }, "instock" : [ { "warehouse" : "B", "qty" : 15 }, { "warehouse" : "C", "qty" : 35 } ] }
+******************************************************************************************************************************************
+$unset
+******************************************************************************************************************************************
+> db.inventory.updateOne({"item":"paper"}, {$unset:{"size":""}})
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+*********************************************************************************************************
+> db.inventory.find()
+{ "_id" : ObjectId("5a6232e2691f1de4b36468bf"), "item" : "journal", "status" : "X", "size" : { "h" : 30, "w" : 21, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c0"), "item" : "notebook", "status" : "A", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ { "warehouse" : "C", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c1"), "item" : "paper", "status" : "F", "instock" : [ { "warehouse" : "A", "qty" : 60 } ], "SIZE" : { "h" : 10, "w" : 10, "uom" : "PP" } }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c2"), "item" : "planner", "status" : "D", "size" : { "h" : 22.85, "w" : 30, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 40 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c3"), "item" : "postcard", "status" : "A", "size" : { "h" : 10, "w" : 15.25, "uom" : "cm" }, "instock" : [ { "warehouse" : "B", "qty" : 15 }, { "warehouse" : "C", "qty" : 35 } ] }
+******************************************************************************************************************************************
+$currentDate : wrong approach
+******************************************************************************************************************************************
+> db.inventory.updateOne({"item":"paper"}, {$currentDate:{"date":}})
+2018-01-20T12:09:39.094+0300 E QUERY    [thread1] SyntaxError: expected expression, got '}' @(shell):1:63
+--------------------------------------------------------------------------------------------------------------------------------------------
+> db.inventory.updateOne({"item":"paper"}, {$currentDate:{"date":""}})
+2018-01-20T12:09:56.515+0300 E QUERY    [thread1] WriteError: string is not valid type for $currentDate. Please use a boolean ('true') or a $type expression ({$type: 'timestamp/date'}). :
+WriteError({
+	"index" : 0,
+	"code" : 2,
+	"errmsg" : "string is not valid type for $currentDate. Please use a boolean ('true') or a $type expression ({$type: 'timestamp/date'}).",
+	"op" : {
+		"q" : {
+			"item" : "paper"
+		},
+		"u" : {
+			"$currentDate" : {
+				"date" : ""
+			}
+		},
+		"multi" : false,
+		"upsert" : false
+	}
+})
+WriteError@src/mongo/shell/bulk_api.js:469:48
+Bulk/mergeBatchResults@src/mongo/shell/bulk_api.js:836:49
+Bulk/executeBatch@src/mongo/shell/bulk_api.js:906:13
+Bulk/this.execute@src/mongo/shell/bulk_api.js:1150:21
+DBCollection.prototype.updateOne@src/mongo/shell/crud_api.js:550:17
+@(shell):1:1
+------------------------------------------------------------------------------------------------------------------------------------------------
+> db.inventory.updateOne({"item":"paper"}, {$currentDate:{"date":{$type: "timestamp"}}})
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+********************************************************************************************************
+> db.inventory.find()
+{ "_id" : ObjectId("5a6232e2691f1de4b36468bf"), "item" : "journal", "status" : "X", "size" : { "h" : 30, "w" : 21, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c0"), "item" : "notebook", "status" : "A", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ { "warehouse" : "C", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c1"), "item" : "paper", "status" : "F", "instock" : [ { "warehouse" : "A", "qty" : 60 } ], "SIZE" : { "h" : 10, "w" : 10, "uom" : "PP" }, "date" : Timestamp(1516439455, 1) }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c2"), "item" : "planner", "status" : "D", "size" : { "h" : 22.85, "w" : 30, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 40 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c3"), "item" : "postcard", "status" : "A", "size" : { "h" : 10, "w" : 15.25, "uom" : "cm" }, "instock" : [ { "warehouse" : "B", "qty" : 15 }, { "warehouse" : "C", "qty" : 35 } ] }
+*****************************************************************************************************************
+$inc
+*****************************************************************************************************************
+> db.inventory.updateOne({"item":"paper"}, {$inc:{"SIZE.h":2}})
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+***********************************************************************
+> db.inventory.find()
+{ "_id" : ObjectId("5a6232e2691f1de4b36468bf"), "item" : "journal", "status" : "X", "size" : { "h" : 30, "w" : 21, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c0"), "item" : "notebook", "status" : "A", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ { "warehouse" : "C", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c1"), "item" : "paper", "status" : "F", "instock" : [ { "warehouse" : "A", "qty" : 60 } ], "SIZE" : { "h" : 12, "w" : 10, "uom" : "PP" }, "date" : Timestamp(1516439455, 1) }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c2"), "item" : "planner", "status" : "D", "size" : { "h" : 22.85, "w" : 30, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 40 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c3"), "item" : "postcard", "status" : "A", "size" : { "h" : 10, "w" : 15.25, "uom" : "cm" }, "instock" : [ { "warehouse" : "B", "qty" : 15 }, { "warehouse" : "C", "qty" : 35 } ] }

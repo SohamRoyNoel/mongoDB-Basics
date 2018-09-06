@@ -1,0 +1,33 @@
+Name	Description
+$exists	Matches documents that have the specified field.
+$type	Selects documents if a field is of the specified type.
+*****************************************************************************
+C:\Program Files\MongoDB\Server\3.4\bin\mongo.exe
+MongoDB shell version v3.4.10
+connecting to: mongodb://localhost:27017/test
+MongoDB server version: 3.4.10
+> db.inventory.find({"size.h":{$exists:5}}).count()
+5
+> db.inventory.find({"size.h":{$exists:7}}).count()
+5
+> db.inventory.find({"size.h":{$exists:5}})
+{ "_id" : ObjectId("5a6232e2691f1de4b36468bf"), "item" : "journal", "status" : "A", "size" : { "h" : 14, "w" : 21, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c0"), "item" : "notebook", "status" : "A", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ { "warehouse" : "C", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c1"), "item" : "paper", "status" : "D", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ { "warehouse" : "A", "qty" : 60 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c2"), "item" : "planner", "status" : "D", "size" : { "h" : 22.85, "w" : 30, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 40 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c3"), "item" : "postcard", "status" : "A", "size" : { "h" : 10, "w" : 15.25, "uom" : "cm" }, "instock" : [ { "warehouse" : "B", "qty" : 15 }, { "warehouse" : "C", "qty" : 35 } ] }
+> db.inventory.find({"size.g":{$exists:5}}).count()
+0
+> db.inventory.find({"size.h":{$type:"string"}}).count()
+0
+> db.inventory.find({"size.h":{$type:"int"}}).count()
+0
+> db.inventory.find({"_id":{$type:"string"}}).count()
+0
+> db.inventory.find({"_id":{$type:“string”"}}).count()
+2018-01-19T23:19:10.484+0300 E QUERY    [thread1] SyntaxError: illegal character @(shell):1:32
+
+
+
+follow this:
+https://docs.mongodb.com/manual/reference/operator/query/type/#op._S_type

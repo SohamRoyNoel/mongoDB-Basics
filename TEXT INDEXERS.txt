@@ -1,0 +1,112 @@
+Microsoft Windows [Version 10.0.15063]
+(c) 2017 Microsoft Corporation. All rights reserved.
+
+C:\Users\HP>mongo
+MongoDB shell version v3.4.10
+connecting to: mongodb://127.0.0.1:27017
+MongoDB server version: 3.4.10
+Server has startup warnings:
+2018-02-02T09:25:46.299-0700 I CONTROL  [initandlisten]
+2018-02-02T09:25:46.303-0700 I CONTROL  [initandlisten] ** WARNING: Access control is not enabled for the database.
+2018-02-02T09:25:46.304-0700 I CONTROL  [initandlisten] **          Read and write access to data and configuration is unrestricted.
+2018-02-02T09:25:46.304-0700 I CONTROL  [initandlisten]
+----------------------CREATING DB
+> use textIndex
+switched to db textIndex
+
+---------INSERTING RANDOM DATA
+-----------------------------------------------------
+> db.textind.insert({"word":"tom has teeth"})
+WriteResult({ "nInserted" : 1 })
+> db.textind.insert({"word":"tom has tail"})
+WriteResult({ "nInserted" : 1 })
+> db.textind.insert({"word":"tom has eye"})
+WriteResult({ "nInserted" : 1 })
+> db.textind.insert({"word":"tom has nose"})
+WriteResult({ "nInserted" : 1 })
+> db.textind.insert({"word":"tom has dick"})
+WriteResult({ "nInserted" : 1 })
+> db.textind.insert({"word":"Jerry has dick"})
+WriteResult({ "nInserted" : 1 })
+> db.textind.insert({"word":"Jerry has nose"})
+WriteResult({ "nInserted" : 1 })
+> db.textind.insert({"word":"Jerry has eye"})
+WriteResult({ "nInserted" : 1 })
+> db.textind.insert({"word":"Jerry has tail"})
+WriteResult({ "nInserted" : 1 })
+> db.textind.insert({"word":"Jerry has teeth"})
+WriteResult({ "nInserted" : 1 })
+---------------------------CHECKING
+--------------------------------------------------------------
+> db.textind.find()
+{ "_id" : ObjectId("5a74acbd272bba41ab026675"), "word" : "tom has teeth" }
+{ "_id" : ObjectId("5a74acc9272bba41ab026676"), "word" : "tom has tail" }
+{ "_id" : ObjectId("5a74acda272bba41ab026677"), "word" : "tom has eye" }
+{ "_id" : ObjectId("5a74ace1272bba41ab026678"), "word" : "tom has nose" }
+{ "_id" : ObjectId("5a74ace7272bba41ab026679"), "word" : "tom has dick" }
+{ "_id" : ObjectId("5a74acf1272bba41ab02667a"), "word" : "Jerry has dick" }
+{ "_id" : ObjectId("5a74acfe272bba41ab02667b"), "word" : "Jerry has nose" }
+{ "_id" : ObjectId("5a74ad09272bba41ab02667c"), "word" : "Jerry has eye" }
+{ "_id" : ObjectId("5a74ad17272bba41ab02667d"), "word" : "Jerry has tail" }
+{ "_id" : ObjectId("5a74ad22272bba41ab02667e"), "word" : "Jerry has teeth" }
+---------------------------------QUERYING
+-----------------------------------------------------------------------
+> db.textind.find({"word":"tom has teeth"})
+{ "_id" : ObjectId("5a74acbd272bba41ab026675"), "word" : "tom has teeth" }
+-------------------------------IN THIS CASES THAT IS NOT FLEXIBLE
+> db.textind.find({"word":"tom has"})
+> db.textind.find({"word":"Jerry"})
+------------------------------------------------------------
+THAT IS WHY WE NEED AN TEXT INDEXER
+FOR RANDOM SEARCH
+-------------------------------------------------------------
+> db.textind.createIndex({"word":"text"})
+{
+        "createdCollectionAutomatically" : false,
+        "numIndexesBefore" : 1,
+        "numIndexesAfter" : 2,
+        "ok" : 1
+}
+------------------------------------------------------------------------
+QUERY USING TEXT INDEXERS
+-------------------------------------------------------------------------
+> db.textind.find({$text:{$search:"tom"}})
+{ "_id" : ObjectId("5a74acbd272bba41ab026675"), "word" : "tom has teeth" }
+{ "_id" : ObjectId("5a74acc9272bba41ab026676"), "word" : "tom has tail" }
+{ "_id" : ObjectId("5a74acda272bba41ab026677"), "word" : "tom has eye" }
+{ "_id" : ObjectId("5a74ace1272bba41ab026678"), "word" : "tom has nose" }
+{ "_id" : ObjectId("5a74ace7272bba41ab026679"), "word" : "tom has dick" }
+------------------------------------------------------------------------------------------
+> db.textind.find({$text:{$search:"Jerry"}})
+{ "_id" : ObjectId("5a74acf1272bba41ab02667a"), "word" : "Jerry has dick" }
+{ "_id" : ObjectId("5a74acfe272bba41ab02667b"), "word" : "Jerry has nose" }
+{ "_id" : ObjectId("5a74ad09272bba41ab02667c"), "word" : "Jerry has eye" }
+{ "_id" : ObjectId("5a74ad17272bba41ab02667d"), "word" : "Jerry has tail" }
+{ "_id" : ObjectId("5a74ad22272bba41ab02667e"), "word" : "Jerry has teeth" }
+-------------------------------------------------------------------------------------------
+> db.textind.find({"word":"tom"}) //NORMAL SEARCH DOESNT WORK
+--------------------------------------------------------------------------------------------
+> db.textind.find({$text:{$search:"tail"}})
+{ "_id" : ObjectId("5a74acc9272bba41ab026676"), "word" : "tom has tail" }
+{ "_id" : ObjectId("5a74ad17272bba41ab02667d"), "word" : "Jerry has tail" }
+---------------------------------------------------------------------------------------------
+> db.textind.find({$text:{$search:"has tail"}})
+{ "_id" : ObjectId("5a74acc9272bba41ab026676"), "word" : "tom has tail" }
+{ "_id" : ObjectId("5a74ad17272bba41ab02667d"), "word" : "Jerry has tail" }
+-------------------------------------------------------------------------------------------------
+CAPITALIZING 
+--------------------------------------------------------------------------------------------------
+> db.textind.find({$text:{$search:"has TAil"}})
+{ "_id" : ObjectId("5a74acc9272bba41ab026676"), "word" : "tom has tail" }
+{ "_id" : ObjectId("5a74ad17272bba41ab02667d"), "word" : "Jerry has tail" }
+-------------------------------------------------------------------------------------------------
+TEXT INDEX AND FINDING THE BEST MATCH BY A NEW ATTRIBUTE
+--------------------------------------------------------------------------------------------------
+> db.textind.find({$text:{$search:"tom has tail"}},{score:{$meta:"textScore"}}).sort({score:{$meta:"textScore"}})
+{ "_id" : ObjectId("5a74acc9272bba41ab026676"), "word" : "tom has tail", "score" : 1.5 }
+{ "_id" : ObjectId("5a74acbd272bba41ab026675"), "word" : "tom has teeth", "score" : 0.75 }
+{ "_id" : ObjectId("5a74acda272bba41ab026677"), "word" : "tom has eye", "score" : 0.75 }
+{ "_id" : ObjectId("5a74ace1272bba41ab026678"), "word" : "tom has nose", "score" : 0.75 }
+{ "_id" : ObjectId("5a74ace7272bba41ab026679"), "word" : "tom has dick", "score" : 0.75 }
+{ "_id" : ObjectId("5a74ad17272bba41ab02667d"), "word" : "Jerry has tail", "score" : 0.75 }
+>

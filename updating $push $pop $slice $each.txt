@@ -1,0 +1,163 @@
+Update Operators
+Name	Description
+$	Acts as a placeholder to update the first element that matches the query condition.
+$[]	Acts as a placeholder to update all elements in an array for the documents that match the query condition.
+$[<identifier>]	Acts as a placeholder to update all elements that match the arrayFilters condition for the documents that match the query condition.
+$addToSet	Adds elements to an array only if they do not already exist in the set.
+$pop	Removes the first or last item of an array.
+$pull	Removes all array elements that match a specified query.
+$push	Adds an item to an array.
+$pullAll	Removes all matching values from an array.
+Update Operator Modifiers
+Name	Description
+$each	Modifies the $push and $addToSet operators to append multiple items for array updates.
+$position	Modifies the $push operator to specify the position in the array to add elements.
+$slice	Modifies the $push operator to limit the size of updated arrays.
+$sort	Modifies the $push operator to reorder documents stored in an array.
+*************************************************************************************************************************************************
+> use test
+switched to db test
+*************************************************************************************************************************************************
+DB
+*************************************************************************************************************************************************
+> db.inventory.find()
+{ "_id" : ObjectId("5a6232e2691f1de4b36468bf"), "item" : "journal", "status" : "X", "size" : { "h" : 30, "w" : 21, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c0"), "item" : "notebook", "status" : "A", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ { "warehouse" : "C", "qty" : 5 }, [ { "NO" : 5, "Food" : 10 } ] ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c1"), "item" : "paper", "status" : "F", "instock" : [ { "warehouse" : "A", "qty" : 60 } ], "SIZE" : { "h" : 12, "w" : 10, "uom" : "PP" }, "date" : Timestamp(1516439455, 1) }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c2"), "item" : "planner", "status" : "D", "size" : { "h" : 22.85, "w" : 30, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 40 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c3"), "item" : "postcard", "status" : "A", "size" : { "h" : 10, "w" : 15.25, "uom" : "cm" }, "instock" : [ { "warehouse" : "B", "qty" : 15 }, { "warehouse" : "C", "qty" : 35 } ] }
+*************************************************************************************************************************************************
+$addToSet
+*************************************************************************************************************************************************
+> db.inventory.update({"item":"notebook"},{$addToSet:{"instock":[{"NO":5, "Food":10}]}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 0 })
+> db.inventory.update({"item":"notebook"},{$addToSet:{"instock":[{"NO":6, "Food":15}]}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+*************************************************************************************************************************************************
+$pop
+*************************************************************************************************************************************************
+> db.inventory.update({"item":"notebook"},{$pop:{"instock":-1}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+----------------------------------------
+> db.inventory.find()
+{ "_id" : ObjectId("5a6232e2691f1de4b36468bf"), "item" : "journal", "status" : "X", "size" : { "h" : 30, "w" : 21, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c0"), "item" : "notebook", "status" : "A", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ [ { "NO" : 5, "Food" : 10 } ], [ { "NO" : 6, "Food" : 15 } ] ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c1"), "item" : "paper", "status" : "F", "instock" : [ { "warehouse" : "A", "qty" : 60 } ], "SIZE" : { "h" : 12, "w" : 10, "uom" : "PP" }, "date" : Timestamp(1516439455, 1) }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c2"), "item" : "planner", "status" : "D", "size" : { "h" : 22.85, "w" : 30, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 40 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c3"), "item" : "postcard", "status" : "A", "size" : { "h" : 10, "w" : 15.25, "uom" : "cm" }, "instock" : [ { "warehouse" : "B", "qty" : 15 }, { "warehouse" : "C", "qty" : 35 } ] }
+-----------------------------------------
+> db.inventory.update({"item":"notebook"},{$pop:{"instock":1}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+******************************
+> db.inventory.find()
+{ "_id" : ObjectId("5a6232e2691f1de4b36468bf"), "item" : "journal", "status" : "X", "size" : { "h" : 30, "w" : 21, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c0"), "item" : "notebook", "status" : "A", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ [ { "NO" : 5, "Food" : 10 } ] ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c1"), "item" : "paper", "status" : "F", "instock" : [ { "warehouse" : "A", "qty" : 60 } ], "SIZE" : { "h" : 12, "w" : 10, "uom" : "PP" }, "date" : Timestamp(1516439455, 1) }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c2"), "item" : "planner", "status" : "D", "size" : { "h" : 22.85, "w" : 30, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 40 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c3"), "item" : "postcard", "status" : "A", "size" : { "h" : 10, "w" : 15.25, "uom" : "cm" }, "instock" : [ { "warehouse" : "B", "qty" : 15 }, { "warehouse" : "C", "qty" : 35 } ] }
+*************************************************************************************************************************************************
+$pull
+*************************************************************************************************************************************************
+> db.inventory.update({"item":"paper"},{$pull:{"instock":{$in:[{"qty":60}]}}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 0 })
+------------------------------------------------
+> db.inventory.find()
+{ "_id" : ObjectId("5a6232e2691f1de4b36468bf"), "item" : "journal", "status" : "X", "size" : { "h" : 30, "w" : 21, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c0"), "item" : "notebook", "status" : "A", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ [ { "NO" : 5, "Food" : 10 } ] ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c1"), "item" : "paper", "status" : "F", "instock" : [ { "warehouse" : "A", "qty" : 60 } ], "SIZE" : { "h" : 12, "w" : 10, "uom" : "PP" }, "date" : Timestamp(1516439455, 1) }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c2"), "item" : "planner", "status" : "D", "size" : { "h" : 22.85, "w" : 30, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 40 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c3"), "item" : "postcard", "status" : "A", "size" : { "h" : 10, "w" : 15.25, "uom" : "cm" }, "instock" : [ { "warehouse" : "B", "qty" : 15 }, { "warehouse" : "C", "qty" : 35 } ] }
+*************************************************************************************************************************************************
+$push, $each, $slice
+*************************************************************************************************************************************************
+> db.inventory.updateOne({"item":"planner"},{$push:{"instock":{$each:[{"warehouse":"X","qty":25}],$position:0,$slice:1}}})
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+----------------------------------------------------
+> db.inventory.find()
+{ "_id" : ObjectId("5a6232e2691f1de4b36468bf"), "item" : "journal", "status" : "X", "size" : { "h" : 30, "w" : 21, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c0"), "item" : "notebook", "status" : "A", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ [ { "NO" : 5, "Food" : 10 } ] ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c1"), "item" : "paper", "status" : "F", "instock" : [ { "warehouse" : "A", "qty" : 60 } ], "SIZE" : { "h" : 12, "w" : 10, "uom" : "PP" }, "date" : Timestamp(1516439455, 1) }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c2"), "item" : "planner", "status" : "D", "size" : { "h" : 22.85, "w" : 30, "uom" : "cm" }, "instock" : [ { "warehouse" : "X", "qty" : 25 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c3"), "item" : "postcard", "status" : "A", "size" : { "h" : 10, "w" : 15.25, "uom" : "cm" }, "instock" : [ { "warehouse" : "B", "qty" : 15 }, { "warehouse" : "C", "qty" : 35 } ] }
+*************************************************************************************************************************************************
+updateMany has the same features like updateOne
+*************************************************************************************************************************************************
+.
+..
+.....
+*************************************************************************************************************************************************
+upsert : when we updating 
+*************************************************************************************************************************************************
+db.collection.update(
+   <query>,
+   <update>,
+   {
+     upsert: <boolean>,
+     multi: <boolean>,
+     writeConcern: <document>,
+     collation: <document>,
+     arrayFilters: [ <filterdocument1>, ... ]
+   }
+)
+
+Parameter	Type	
+
+The selection criteria for the update. The same query selectors as in the find() method are available.
+
+Changed in version 3.0: When you execute an update() with upsert: true and the query matches no existing document, MongoDB will refuse to insert a new document if the query specifies conditions on the _id field using dot notation.
+
+For more information and an example, see upsert:true with a Dotted _id Query.
+
+update	document	The modifications to apply. For details see Update Parameter.
+upsert	boolean	Optional. If set to true, creates a new document when no document matches the query criteria. The default value is false, which does not insert a new document when no match is found.
+multi	boolean	Optional. If set to true, updates multiple documents that meet the query criteria. If set to false, updates one document. The default value is false. For additional information, see Multi Parameter.
+writeConcern	document	
+Optional. A document expressing the write concern. Omit to use the default write concern. See Write Concern.
+
+New in version 2.6.
+
+collation	document	
+Optional.
+
+Specifies the collation to use for the operation.
+
+Collation allows users to specify language-specific rules for string comparison, such as rules for lettercase and accent marks.
+
+The collation option has the following syntax:
+
+collation: {
+   locale: <string>,
+   caseLevel: <boolean>,
+   caseFirst: <string>,
+   strength: <int>,
+   numericOrdering: <boolean>,
+   alternate: <string>,
+   maxVariable: <string>,
+   backwards: <boolean>
+}
+When specifying collation, the locale field is mandatory; all other collation fields are optional. For descriptions of the fields, see Collation Document.
+
+If the collation is unspecified but the collection has a default collation (see db.createCollection()), the operation uses the collation specified for the collection.
+
+If no collation is specified for the collection or for the operations, MongoDB uses the simple binary comparison used in prior versions for string comparisons.
+
+You cannot specify multiple collations for an operation. For example, you cannot specify different collations per field, or if performing a find with a sort, you cannot use one collation for the find and another for the sort.
+
+New in version 3.4.
+
+arrayFilters	array	
+Optional. An array of filter documents that determines which array elements to modify for an update operation on an array field.
+
+In the update document, use the $[<identifier>] filtered positional operator to define an identifier, which you then reference in the array filter documents. You cannot have an array filter document for an identifier if the identifier is not included in the update document.
+
+NOTE
+
+The <identifier> must begin with a lowercase letter and contain only alphanumeric characters.
+
+You can include the same identifier multiple times in the update document; however, for each distinct identifier ($[identifier]) in the update document, you must specify exactly one corresponding array filter document. That is, you cannot specify multiple array filter documents for the same identifier. For example, if the update statement includes the identifier x (possibly multiple times), you cannot specify the following value for arrayFilters:
+
+[ { "x.a": { $gt: 85} }, { "x.b": { $gt: 80 } } ]
+However, you can specify compound conditions on the same identifier in a single array filter document, such as:
+
+[ { $or: [ { "x.a": { $gt: 85} }, { "x.b": { $gt: 80 } } ] } ]
+[ { $and: [ { "x.a": { $gt: 85} }, { "x.b": { $gt: 80 } } ] } ]

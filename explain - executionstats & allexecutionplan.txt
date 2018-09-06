@@ -1,0 +1,646 @@
+C:\Users\HP>mongo
+MongoDB shell version v3.4.10
+connecting to: mongodb://127.0.0.1:27017
+MongoDB server version: 3.4.10
+Server has startup warnings:
+2018-02-01T11:12:06.996-0700 I CONTROL  [initandlisten]
+2018-02-01T11:12:06.997-0700 I CONTROL  [initandlisten] ** WARNING: Access control is not enabled for the database.
+2018-02-01T11:12:06.997-0700 I CONTROL  [initandlisten] **          Read and write access to data and configuration is unrestricted.
+2018-02-01T11:12:06.997-0700 I CONTROL  [initandlisten]
+> use mng
+switched to db mng
+> db.example.find()
+{ "_id" : 0, "a" : 0, "b" : 0, "c" : 0 }
+{ "_id" : 1, "a" : 0, "b" : 0, "c" : 1 }
+{ "_id" : 2, "a" : 0, "b" : 0, "c" : 2 }
+{ "_id" : 3, "a" : 0, "b" : 0, "c" : 3 }
+{ "_id" : 4, "a" : 0, "b" : 0, "c" : 4 }
+{ "_id" : 5, "a" : 0, "b" : 0, "c" : 5 }
+{ "_id" : 6, "a" : 0, "b" : 0, "c" : 6 }
+{ "_id" : 7, "a" : 0, "b" : 0, "c" : 7 }
+{ "_id" : 8, "a" : 0, "b" : 0, "c" : 8 }
+{ "_id" : 9, "a" : 0, "b" : 0, "c" : 9 }
+{ "_id" : 10, "a" : 0, "b" : 0, "c" : 10 }
+{ "_id" : 11, "a" : 0, "b" : 0, "c" : 11 }
+{ "_id" : 12, "a" : 0, "b" : 0, "c" : 12 }
+{ "_id" : 13, "a" : 0, "b" : 0, "c" : 13 }
+{ "_id" : 14, "a" : 0, "b" : 0, "c" : 14 }
+{ "_id" : 15, "a" : 0, "b" : 0, "c" : 15 }
+{ "_id" : 16, "a" : 0, "b" : 0, "c" : 16 }
+{ "_id" : 17, "a" : 0, "b" : 0, "c" : 17 }
+{ "_id" : 18, "a" : 0, "b" : 0, "c" : 18 }
+{ "_id" : 19, "a" : 0, "b" : 0, "c" : 19 }
+Type "it" for more
+> db.example.getIndexes()
+[
+        {
+                "v" : 1,
+                "key" : {
+                        "_id" : 1
+                },
+                "name" : "_id_",
+                "ns" : "mng.example"
+        },
+        {
+                "v" : 1,
+                "key" : {
+                        "a" : 1,
+                        "b" : 1
+                },
+                "name" : "a_1_b_1",
+                "ns" : "mng.example"
+        },
+        {
+                "v" : 1,
+                "key" : {
+                        "b" : 1
+                },
+                "name" : "b_1",
+                "ns" : "mng.example"
+        }
+]
+*************************************************************
+executionStats
+*************************************************************
+> var ind=db.example.explain("executionStats")
+> ind.find({"a":17,"b":55})
+{
+        "queryPlanner" : {
+                "plannerVersion" : 1,
+                "namespace" : "mng.example",
+                "indexFilterSet" : false,
+                "parsedQuery" : {
+                        "$and" : [
+                                {
+                                        "a" : {
+                                                "$eq" : 17
+                                        }
+                                },
+                                {
+                                        "b" : {
+                                                "$eq" : 55
+                                        }
+                                }
+                        ]
+                },
+                "winningPlan" : {
+                        "stage" : "FETCH",
+                        "inputStage" : {
+                                "stage" : "IXSCAN",
+                                "keyPattern" : {
+                                        "a" : 1,
+                                        "b" : 1
+                                },
+                                "indexName" : "a_1_b_1",
+                                "isMultiKey" : false,
+                                "multiKeyPaths" : {
+                                        "a" : [ ],
+                                        "b" : [ ]
+                                },
+                                "isUnique" : false,
+                                "isSparse" : false,
+                                "isPartial" : false,
+                                "indexVersion" : 1,
+                                "direction" : "forward",
+                                "indexBounds" : {
+                                        "a" : [
+                                                "[17.0, 17.0]"
+                                        ],
+                                        "b" : [
+                                                "[55.0, 55.0]"
+                                        ]
+                                }
+                        }
+                },
+                "rejectedPlans" : [
+                        {
+                                "stage" : "FETCH",
+                                "filter" : {
+                                        "a" : {
+                                                "$eq" : 17
+                                        }
+                                },
+                                "inputStage" : {
+                                        "stage" : "IXSCAN",
+                                        "keyPattern" : {
+                                                "b" : 1
+                                        },
+                                        "indexName" : "b_1",
+                                        "isMultiKey" : false,
+                                        "multiKeyPaths" : {
+                                                "b" : [ ]
+                                        },
+                                        "isUnique" : false,
+                                        "isSparse" : false,
+                                        "isPartial" : false,
+                                        "indexVersion" : 1,
+                                        "direction" : "forward",
+                                        "indexBounds" : {
+                                                "b" : [
+                                                        "[55.0, 55.0]"
+                                                ]
+                                        }
+                                }
+                        }
+                ]
+        },
+        "executionStats" : {
+                "executionSuccess" : true,
+                "nReturned" : 100,
+                "executionTimeMillis" : 8, //TAKEN TIME===1 
+                "totalKeysExamined" : 100,// FACTOR == 2
+                "totalDocsExamined" : 100,// FACTOR == 3
+                "executionStages" : {
+                        "stage" : "FETCH",
+                        "nReturned" : 100,
+                        "executionTimeMillisEstimate" : 0,
+                        "works" : 102, 
+                        "advanced" : 100,
+                        "needTime" : 0,
+                        "needYield" : 0,
+                        "saveState" : 2,
+                        "restoreState" : 2,
+                        "isEOF" : 1,
+                        "invalidates" : 0,
+                        "docsExamined" : 100,
+                        "alreadyHasObj" : 0,
+                        "inputStage" : {
+                                "stage" : "IXSCAN",
+                                "nReturned" : 100,
+                                "executionTimeMillisEstimate" : 0,
+                                "works" : 101,
+                                "advanced" : 100,
+                                "needTime" : 0,
+                                "needYield" : 0,
+                                "saveState" : 2,
+                                "restoreState" : 2,
+                                "isEOF" : 1,
+                                "invalidates" : 0,
+                                "keyPattern" : {
+                                        "a" : 1,
+                                        "b" : 1
+                                },
+                                "indexName" : "a_1_b_1",
+                                "isMultiKey" : false,
+                                "multiKeyPaths" : {
+                                        "a" : [ ],
+                                        "b" : [ ]
+                                },
+                                "isUnique" : false,
+                                "isSparse" : false,
+                                "isPartial" : false,
+                                "indexVersion" : 1,
+                                "direction" : "forward",
+                                "indexBounds" : {
+                                        "a" : [
+                                                "[17.0, 17.0]"
+                                        ],
+                                        "b" : [
+                                                "[55.0, 55.0]"
+                                        ]
+                                },
+                                "keysExamined" : 100,
+                                "seeks" : 1,
+                                "dupsTested" : 0,
+                                "dupsDropped" : 0,
+                                "seenInvalidated" : 0
+                        }
+                }
+        },
+        "serverInfo" : {
+                "host" : "DESKTOP-88GJBMO",
+                "port" : 27017,
+                "version" : "3.4.10",
+                "gitVersion" : "078f28920cb24de0dd479b5ea6c66c644f6326e9"
+        },
+        "ok" : 1
+}
+********************************************
+DROPPING INDEXES & CHECKING
+********************************************
+> db.example.dropIndex({"a":1,"b":1})
+{ "nIndexesWas" : 3, "ok" : 1 }
+-------------------------------------------
+> db.example.getIndexes()
+[
+        {
+                "v" : 1,
+                "key" : {
+                        "_id" : 1
+                },
+                "name" : "_id_",
+                "ns" : "mng.example"
+        },
+        {
+                "v" : 1,
+                "key" : {
+                        "b" : 1
+                },
+                "name" : "b_1",
+                "ns" : "mng.example"
+        }
+]
+--------------------------------------------
+> db.example.dropIndex({"b":1})
+{ "nIndexesWas" : 2, "ok" : 1 }
+------------------------------------------
+> db.example.getIndexes()
+[
+        {
+                "v" : 1,
+                "key" : {
+                        "_id" : 1
+                },
+                "name" : "_id_",
+                "ns" : "mng.example"
+        }
+]
+***************************************************************
+CHECKING WHEN NO INDEX IS AVAILABLE
+****************************************************************
+> ind.find({"a":17,"b":55})
+{
+        "queryPlanner" : {
+                "plannerVersion" : 1,
+                "namespace" : "mng.example",
+                "indexFilterSet" : false,
+                "parsedQuery" : {
+                        "$and" : [
+                                {
+                                        "a" : {
+                                                "$eq" : 17
+                                        }
+                                },
+                                {
+                                        "b" : {
+                                                "$eq" : 55
+                                        }
+                                }
+                        ]
+                },
+                "winningPlan" : {
+                        "stage" : "COLLSCAN",
+                        "filter" : {
+                                "$and" : [
+                                        {
+                                                "a" : {
+                                                        "$eq" : 17
+                                                }
+                                        },
+                                        {
+                                                "b" : {
+                                                        "$eq" : 55
+                                                }
+                                        }
+                                ]
+                        },
+                        "direction" : "forward"
+                },
+                "rejectedPlans" : [ ]
+        },
+        "executionStats" : {
+                "executionSuccess" : true,
+                "nReturned" : 100, // FACTOR == 1
+                "executionTimeMillis" : 3553, //// FACTOR == 2
+                "totalKeysExamined" : 0,
+                "totalDocsExamined" : 1000000, //// FACTOR == 3
+                "executionStages" : {
+                        "stage" : "COLLSCAN", // FACTOR == 4
+                        "filter" : {
+                                "$and" : [
+                                        {
+                                                "a" : {
+                                                        "$eq" : 17
+                                                }
+                                        },
+                                        {
+                                                "b" : {
+                                                        "$eq" : 55
+                                                }
+                                        }
+                                ]
+                        },
+                        "nReturned" : 100,
+                        "executionTimeMillisEstimate" : 2939,
+                        "works" : 1000002,
+                        "advanced" : 100,
+                        "needTime" : 999901,
+                        "needYield" : 0,
+                        "saveState" : 7884,
+                        "restoreState" : 7884,
+                        "isEOF" : 1,
+
+                        "invalidates" : 0,
+                        "direction" : "forward",
+                        "docsExamined" : 1000000
+                }
+        },
+        "serverInfo" : {
+                "host" : "DESKTOP-88GJBMO",
+                "port" : 27017,
+                "version" : "3.4.10",
+                "gitVersion" : "078f28920cb24de0dd479b5ea6c66c644f6326e9"
+        },
+        "ok" : 1
+}
+
+===================================
+GETTING THE INDEX BACK
+====================================
+> db.example.createIndex({"a":1,"b":1})
+{
+        "createdCollectionAutomatically" : false,
+        "numIndexesBefore" : 1,
+        "numIndexesAfter" : 2,
+        "ok" : 1
+}
+> db.example.createIndex({"b":1})
+{
+        "createdCollectionAutomatically" : false,
+        "numIndexesBefore" : 2,
+        "numIndexesAfter" : 3,
+        "ok" : 1
+}
+===================================================
+ALLPLANSEXECUTION : COMPARES BOTH plan and grants the best
+===================================================
+> var ind1=db.example.explain("allPlansExecution")
+--------------------------------------------------------------------------
+> ind1.find({"a":17,"b":55})
+{
+        "queryPlanner" : {
+                "plannerVersion" : 1,
+                "namespace" : "mng.example",
+                "indexFilterSet" : false,
+                "parsedQuery" : {
+                        "$and" : [
+                                {
+                                        "a" : {
+                                                "$eq" : 17
+                                        }
+                                },
+                                {
+                                        "b" : {
+                                                "$eq" : 55
+                                        }
+                                }
+                        ]
+                },
+                "winningPlan" : {
+                        "stage" : "FETCH",
+                        "inputStage" : {
+                                "stage" : "IXSCAN", //FACTOR == 1
+                                "keyPattern" : {
+                                        "a" : 1,
+                                        "b" : 1
+                                },
+                                "indexName" : "a_1_b_1",//FACTOR == 2
+                                "isMultiKey" : false,
+                                "multiKeyPaths" : {
+                                        "a" : [ ],
+                                        "b" : [ ]
+                                },
+                                "isUnique" : false,
+                                "isSparse" : false,
+                                "isPartial" : false,
+                                "indexVersion" : 1,
+                                "direction" : "forward",
+                                "indexBounds" : {
+                                        "a" : [
+                                                "[17.0, 17.0]"
+                                        ],
+                                        "b" : [
+                                                "[55.0, 55.0]"
+                                        ]
+                                }
+                        }
+                },
+                "rejectedPlans" : [
+                        {
+                                "stage" : "FETCH",
+                                "filter" : {
+                                        "a" : {
+                                                "$eq" : 17
+                                        }
+                                },
+                                "inputStage" : {
+                                        "stage" : "IXSCAN",
+                                        "keyPattern" : {
+                                                "b" : 1
+                                        },
+                                        "indexName" : "b_1", //B IS REGECTE
+                                        "isMultiKey" : false,
+                                        "multiKeyPaths" : {
+                                                "b" : [ ]
+                                        },
+                                        "isUnique" : false,
+                                        "isSparse" : false,
+                                        "isPartial" : false,
+                                        "indexVersion" : 1,
+                                        "direction" : "forward",
+                                        "indexBounds" : {
+                                                "b" : [
+                                                        "[55.0, 55.0]"
+                                                ]
+                                        }
+                                }
+                        }
+                ]
+        },
+        "executionStats" : {
+                "executionSuccess" : true,
+                "nReturned" : 100,
+                "executionTimeMillis" : 6,
+                "totalKeysExamined" : 100,
+                "totalDocsExamined" : 100,
+                "executionStages" : {
+                        "stage" : "FETCH",
+                        "nReturned" : 100,
+                        "executionTimeMillisEstimate" : 0,
+                        "works" : 102,
+                        "advanced" : 100,
+                        "needTime" : 0,
+                        "needYield" : 0,
+                        "saveState" : 2,
+                        "restoreState" : 2,
+                        "isEOF" : 1,
+                        "invalidates" : 0,
+                        "docsExamined" : 100,
+                        "alreadyHasObj" : 0,
+                        "inputStage" : {
+                                "stage" : "IXSCAN",
+                                "nReturned" : 100,
+                                "executionTimeMillisEstimate" : 0,
+                                "works" : 101,
+                                "advanced" : 100,
+                                "needTime" : 0,
+                                "needYield" : 0,
+                                "saveState" : 2,
+                                "restoreState" : 2,
+                                "isEOF" : 1,
+                                "invalidates" : 0,
+                                "keyPattern" : {
+                                        "a" : 1,
+                                        "b" : 1
+                                },
+                                "indexName" : "a_1_b_1",
+                                "isMultiKey" : false,
+                                "multiKeyPaths" : {
+                                        "a" : [ ],
+                                        "b" : [ ]
+                                },
+                                "isUnique" : false,
+                                "isSparse" : false,
+                                "isPartial" : false,
+                                "indexVersion" : 1,
+                                "direction" : "forward",
+                                "indexBounds" : {
+                                        "a" : [
+                                                "[17.0, 17.0]"
+                                        ],
+                                        "b" : [
+                                                "[55.0, 55.0]"
+                                        ]
+                                },
+                                "keysExamined" : 100,
+                                "seeks" : 1,
+                                "dupsTested" : 0,
+                                "dupsDropped" : 0,
+                                "seenInvalidated" : 0
+                        }
+                },
+                "allPlansExecution" : [
+                        {
+                                "nReturned" : 0,
+                                "executionTimeMillisEstimate" : 0,
+                                "totalKeysExamined" : 101, ////FACTOR == 2 == RETURNED 101 DOCS THAT IS MORE
+                                "totalDocsExamined" : 101,
+                                "executionStages" : {
+                                        "stage" : "FETCH",
+                                        "filter" : {
+                                                "a" : {
+                                                        "$eq" : 17
+                                                }
+                                        },
+                                        "nReturned" : 0,
+                                        "executionTimeMillisEstimate" : 0,
+                                        "works" : 101,
+                                        "advanced" : 0,
+                                        "needTime" : 101,
+                                        "needYield" : 0,
+                                        "saveState" : 1,
+                                        "restoreState" : 1,
+                                        "isEOF" : 0,
+                                        "invalidates" : 0,
+                                        "docsExamined" : 101,
+                                        "alreadyHasObj" : 0,
+                                        "inputStage" : {
+                                                "stage" : "IXSCAN",
+                                                "nReturned" : 101,
+                                                "executionTimeMillisEstimate" : 0,
+                                                "works" : 101,
+                                                "advanced" : 101,
+                                                "needTime" : 0,
+                                                "needYield" : 0,
+                                                "saveState" : 1,
+                                                "restoreState" : 1,
+                                                "isEOF" : 0,
+                                                "invalidates" : 0,
+                                                "keyPattern" : {
+                                                        "b" : 1
+                                                },
+                                                "indexName" : "b_1", ////FACTOR == 1 == BAD INDEXER
+                                                "isMultiKey" : false,
+                                                "multiKeyPaths" : {
+                                                        "b" : [ ]
+                                                },
+                                                "isUnique" : false,
+                                                "isSparse" : false,
+                                                "isPartial" : false,
+                                                "indexVersion" : 1,
+                                                "direction" : "forward",
+                                                "indexBounds" : {
+                                                        "b" : [
+                                                                "[55.0, 55.0]"
+                                                        ]
+                                                },
+                                                "keysExamined" : 101,
+                                                "seeks" : 1,
+                                                "dupsTested" : 0,
+                                                "dupsDropped" : 0,
+                                                "seenInvalidated" : 0
+                                        }
+                                }
+                        },
+                        {
+                                "nReturned" : 100, ////FACTOR == 1 (RETURNS 100
+                                "executionTimeMillisEstimate" : 0,
+                                "totalKeysExamined" : 100, //FACTOR == 2
+                                "totalDocsExamined" : 100,
+                                "executionStages" : {
+                                        "stage" : "FETCH",
+                                        "nReturned" : 100,
+                                        "executionTimeMillisEstimate" : 0,
+                                        "works" : 101,
+                                        "advanced" : 100,
+                                        "needTime" : 0,
+                                        "needYield" : 0,
+                                        "saveState" : 1,
+                                        "restoreState" : 1,
+                                        "isEOF" : 1,
+                                        "invalidates" : 0,
+                                        "docsExamined" : 100,
+                                        "alreadyHasObj" : 0,
+                                        "inputStage" : {
+                                                "stage" : "IXSCAN",//FACTOR == 3
+                                                "nReturned" : 100,
+                                                "executionTimeMillisEstimate" : 0,
+                                                "works" : 101,
+                                                "advanced" : 100,
+                                                "needTime" : 0,
+                                                "needYield" : 0,
+                                                "saveState" : 1,
+                                                "restoreState" : 1,
+                                                "isEOF" : 1,
+                                                "invalidates" : 0,
+                                                "keyPattern" : {
+                                                        "a" : 1,
+                                                        "b" : 1
+                                                },
+                                                "indexName" : "a_1_b_1",//FACTOR == 4
+                                                "isMultiKey" : false,
+                                                "multiKeyPaths" : {
+                                                        "a" : [ ],
+                                                        "b" : [ ]
+                                                },
+                                                "isUnique" : false,
+                                                "isSparse" : false,
+                                                "isPartial" : false,
+                                                "indexVersion" : 1,
+                                                "direction" : "forward",
+                                                "indexBounds" : {
+                                                        "a" : [
+                                                                "[17.0, 17.0]"
+                                                        ],
+                                                        "b" : [
+                                                                "[55.0, 55.0]"
+                                                        ]
+                                                },
+                                                "keysExamined" : 100,
+                                                "seeks" : 1,
+                                                "dupsTested" : 0,
+                                                "dupsDropped" : 0,
+                                                "seenInvalidated" : 0
+                                        }
+                                }
+                        }
+                ]
+        },
+        "serverInfo" : {
+                "host" : "DESKTOP-88GJBMO",
+                "port" : 27017,
+                "version" : "3.4.10",
+                "gitVersion" : "078f28920cb24de0dd479b5ea6c66c644f6326e9"
+        },
+        "ok" : 1
+}

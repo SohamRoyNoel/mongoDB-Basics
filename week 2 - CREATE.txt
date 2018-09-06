@@ -1,0 +1,268 @@
+
+MongoDB server version: 3.4.10
+> use week2db
+switched to db week2db
+
+**********************************************************************************insertOne()***************************************
+> db.week2db.insertOne({"Name":"Soham", "year":"1997", "imdb":"147854hhh41"})
+{
+	"acknowledged" : true,
+	"insertedId" : ObjectId("5a5e85bb13e15eecdf59123d")
+}
+**********************************************************************************insertOne()***************************************USING AN _id CREATED BY US
+> db.week2db.insertOne({"Name":"Soham", "year":"1997", "_id":"1245"})
+{ "acknowledged" : true, "insertedId" : "1245" }
+*************************************************SEEING ALL THE VALUES**********************************************************************
+> db.week2db.find().pretty()
+{
+	"_id" : ObjectId("5a5e85bb13e15eecdf59123d"),
+	"Name" : "Soham",
+	"year" : "1997",
+	"imdb" : "147854hhh41"
+}
+{ "_id" : "1245", "Name" : "Soham", "year" : "1997" }  **_id arrived as given**
+****************************************************************INSERTING MANY (.insertMany())*************************************HAVING NO DUPLICATE _id
+> db.week2dbN.insertMany(
+[
+  {  
+         "position":"Right Wing",
+         "id":8465166,
+         "weight":200,
+         "height":"6' 0\"",
+         "imageUrl":"http://1.cdn.nhle.com/photos/mugs/8465166.jpg",
+         "birthplace":"Seria, BRN",
+         "age":37,
+         "name":"Craig Adams",
+         "birthdate":"April 26, 1977",
+         "number":27
+      },
+      {  
+         "position":"Right Wing",
+         "id":8475761,
+         "weight":195,
+         "height":"6' 2\"",
+         "imageUrl":"http://1.cdn.nhle.com/photos/mugs/8475761.jpg",
+         "birthplace":"Gardena, CA, USA",
+         "age":23,
+         "name":"Beau Bennett",
+         "birthdate":"November 27, 1991",
+         "number":19
+      },
+      {  
+         "position":"Left Wing",
+         "id":8471260,
+         "weight":202,
+         "height":"6' 1\"",
+         "imageUrl":"http://3.cdn.nhle.com/photos/mugs/8471260.jpg",
+         "birthplace":"Meadow Lake, SK, CAN",
+         "age":29,
+         "name":"Blake Comeau",
+         "birthdate":"February 18, 1986",
+         "number":17
+      },
+      {  
+         "position":"Center",
+         "id":8471675,
+         "weight":200,
+         "height":"5' 11\"",
+         "imageUrl":"http://3.cdn.nhle.com/photos/mugs/8471675.jpg",
+         "birthplace":"Cole Harbour, NS, CAN",
+         "age":27,
+         "name":"Sidney Crosby",
+         "birthdate":"August 07, 1987",
+         "number":87
+      },
+      {  
+         "position":"Right Wing",
+         "id":8471703,
+         "twitterURL":"https://twitter.com/S9Downie",
+         "weight":191,
+         "height":"5' 11\"",
+         "imageUrl":"http://1.cdn.nhle.com/photos/mugs/8471703.jpg",
+         "birthplace":"Newmarket, ON, CAN",
+         "twitterHandle":"S9Downie",
+         "age":28,
+         "name":"Steve Downie",
+         "birthdate":"April 03, 1987",
+         "number":23
+      }
+]
+);
+{
+	"acknowledged" : true,
+	"insertedIds" : [
+		ObjectId("5a5e896f13e15eecdf59123e"),
+		ObjectId("5a5e896f13e15eecdf59123f"),
+		ObjectId("5a5e896f13e15eecdf591240"),
+		ObjectId("5a5e896f13e15eecdf591241"),
+		ObjectId("5a5e896f13e15eecdf591242")
+	]
+}
+*****************************************************************************CHECKING DATA WHAT WE HAVE************************************************************************
+> db.week2dbN.find()
+{ "_id" : ObjectId("5a5e896f13e15eecdf59123e"), "position" : "Right Wing", "id" : 8465166, "weight" : 200, "height" : "6' 0\"", "imageUrl" : "http://1.cdn.nhle.com/photos/mugs/8465166.jpg", "birthplace" : "Seria, BRN", "age" : 37, "name" : "Craig Adams", "birthdate" : "April 26, 1977", "number" : 27 }
+{ "_id" : ObjectId("5a5e896f13e15eecdf59123f"), "position" : "Right Wing", "id" : 8475761, "weight" : 195, "height" : "6' 2\"", "imageUrl" : "http://1.cdn.nhle.com/photos/mugs/8475761.jpg", "birthplace" : "Gardena, CA, USA", "age" : 23, "name" : "Beau Bennett", "birthdate" : "November 27, 1991", "number" : 19 }
+{ "_id" : ObjectId("5a5e896f13e15eecdf591240"), "position" : "Left Wing", "id" : 8471260, "weight" : 202, "height" : "6' 1\"", "imageUrl" : "http://3.cdn.nhle.com/photos/mugs/8471260.jpg", "birthplace" : "Meadow Lake, SK, CAN", "age" : 29, "name" : "Blake Comeau", "birthdate" : "February 18, 1986", "number" : 17 }
+{ "_id" : ObjectId("5a5e896f13e15eecdf591241"), "position" : "Center", "id" : 8471675, "weight" : 200, "height" : "5' 11\"", "imageUrl" : "http://3.cdn.nhle.com/photos/mugs/8471675.jpg", "birthplace" : "Cole Harbour, NS, CAN", "age" : 27, "name" : "Sidney Crosby", "birthdate" : "August 07, 1987", "number" : 87 }
+{ "_id" : ObjectId("5a5e896f13e15eecdf591242"), "position" : "Right Wing", "id" : 8471703, "twitterURL" : "https://twitter.com/S9Downie", "weight" : 191, "height" : "5' 11\"", "imageUrl" : "http://1.cdn.nhle.com/photos/mugs/8471703.jpg", "birthplace" : "Newmarket, ON, CAN", "twitterHandle" : "S9Downie", "age" : 28, "name" : "Steve Downie", "birthdate" : "April 03, 1987", "number" : 23 }
+
+********************************************************************DROPPING IT NOW********************************************************************************
+> db.week2dbN.drop()
+true
+
+*******************************************************************SEARCHING DATA TO CHECK IF THE COLLECTION IS EMPTY OR NOT********************************************
+> db.week2dbN.find()
+
+****************************************************************INSERTING MANY (.insertMany())*************************************HAVING A DUPLICATE _id
+> db.week2dbN.insertMany([
+    {
+        "_id":"126",
+        "Name":"Soham",
+        "Age":"20",
+        "Nick":"Puku"
+    },
+    {
+            "_id":"125",
+            "Name":"Ivy",
+            "Age":"20",
+            "Nick":"Tipu Tipu"
+    },
+    {
+            "_id":"126",            **DUPLICATE
+            "Name":"Soham",
+            "Age":"20",
+            "Nick":"Puku"
+    },
+    {
+            "_id":"124",
+            "Name":"Sreeparna",
+            "Age":"19",
+            "Nick":"And Gate"
+    },
+    {
+            "_id":"123",
+            "Name":"Ankita",
+            "Age":"20",
+            "Nick":"Puku"
+    }
+]);
+2018-01-17T02:59:39.119+0300 E QUERY    [thread1] BulkWriteError: write error at item 2 in bulk operation :
+BulkWriteError({
+	"writeErrors" : [
+		{
+			"index" : 2,
+			"code" : 11000,
+			"errmsg" : "E11000 duplicate key error collection: week2db.week2dbN index: _id_ dup key: { : \"126\" }",
+			"op" : {
+				"_id" : "126",      ***********HERE IS THE SHIT
+				"Name" : "Soham",
+				"Age" : "20",
+				"Nick" : "Puku"
+			}
+		}
+	],
+	"writeConcernErrors" : [ ],
+	"nInserted" : 2,   ***************************************THIS MEANS WE HAVE AN EXTRA
+	"nUpserted" : 0,
+	"nMatched" : 0,
+	"nModified" : 0,
+	"nRemoved" : 0,
+	"upserted" : [ ]
+})
+BulkWriteError@src/mongo/shell/bulk_api.js:372:48
+BulkWriteResult/this.toError@src/mongo/shell/bulk_api.js:336:24
+Bulk/this.execute@src/mongo/shell/bulk_api.js:1173:1
+DBCollection.prototype.insertMany@src/mongo/shell/crud_api.js:302:5
+@(shell):1:1
+****************************************************************INSERTING MANY (.insertMany())*************************************HAVING NO DUPLICATE _id********************BUT THE PROCESS WILL ACCEPT ALL DATA CONSIQUENTLY
+> db.week2dbN.insertMany([
+    {
+        "_id":"126",
+        "Name":"Soham",
+        "Age":"20",
+        "Nick":"Puku"
+    },
+    {
+            "_id":"125",
+            "Name":"Ivy",
+            "Age":"20",
+            "Nick":"Tipu Tipu"
+    },
+    {
+            "_id":"126",
+            "Name":"Soham",
+            "Age":"20",
+            "Nick":"Puku"
+    },
+    {
+            "_id":"124",
+            "Name":"Sreeparna",
+            "Age":"19",
+            "Nick":"And Gate"
+    },
+    {
+            "_id":"123",
+            "Name":"Ankita",
+            "Age":"20",
+            "Nick":"Puku"
+    }
+],
+{"ordered":false} *****WHEN THE DATA LIVES IN ORDER THEN THE .insertMany WILL BREAK AS SOON AS A DUPLICATION WILL BE FOUND..*****************turn it FALSE*****process will not break, and all entries will be inserted.
+);
+2018-01-17T03:05:37.395+0300 E QUERY    [thread1] BulkWriteError: 3 write errors in bulk operation :
+BulkWriteError({
+	"writeErrors" : [
+		{
+			"index" : 0,
+			"code" : 11000,
+			"errmsg" : "E11000 duplicate key error collection: week2db.week2dbN index: _id_ dup key: { : \"126\" }",
+			"op" : {
+				"_id" : "126",
+				"Name" : "Soham",
+				"Age" : "20",
+				"Nick" : "Puku"
+			}
+		},
+		{
+			"index" : 1,
+			"code" : 11000,
+			"errmsg" : "E11000 duplicate key error collection: week2db.week2dbN index: _id_ dup key: { : \"125\" }",
+			"op" : {
+				"_id" : "125",
+				"Name" : "Ivy",
+				"Age" : "20",
+				"Nick" : "Tipu Tipu"
+			}
+		},
+		{
+			"index" : 2,
+			"code" : 11000,
+			"errmsg" : "E11000 duplicate key error collection: week2db.week2dbN index: _id_ dup key: { : \"126\" }",
+			"op" : {
+				"_id" : "126",
+				"Name" : "Soham",
+				"Age" : "20",
+				"Nick" : "Puku"
+			}
+		}
+	],
+	"writeConcernErrors" : [ ],
+	"nInserted" : 2,
+	"nUpserted" : 0,
+	"nMatched" : 0,
+	"nModified" : 0,
+	"nRemoved" : 0,
+	"upserted" : [ ]
+})
+BulkWriteError@src/mongo/shell/bulk_api.js:372:48
+BulkWriteResult/this.toError@src/mongo/shell/bulk_api.js:336:24
+Bulk/this.execute@src/mongo/shell/bulk_api.js:1173:1
+DBCollection.prototype.insertMany@src/mongo/shell/crud_api.js:302:5
+@(shell):1:1
+
+******************************************************************************************************************************HERE IS THE PROOF (no duplicate column)
+> db.week2dbN.find().pretty()
+{ "_id" : "126", "Name" : "Soham", "Age" : "20", "Nick" : "Puku" }
+{ "_id" : "125", "Name" : "Ivy", "Age" : "20", "Nick" : "Tipu Tipu" }
+{ "_id" : "124", "Name" : "Sreeparna", "Age" : "19", "Nick" : "And Gate" }
+{ "_id" : "123", "Name" : "Ankita", "Age" : "20", "Nick" : "Puku" }

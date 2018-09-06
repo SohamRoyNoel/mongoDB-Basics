@@ -1,0 +1,728 @@
+************************************************************************************************************************
+COVERED QUERY:
+If a query has all the value mentioned similar to the index name then executionstats doesnt count DOC bcz it belives that 
+all are included beforehead.
+ex:
+1. index:    [db.example.createIndex({a:1,b:1,c:1})]
+2. query : 
+************************************************************************************************************************
+C:\Users\HP>mongo
+MongoDB shell version v3.4.10
+connecting to: mongodb://127.0.0.1:27017
+MongoDB server version: 3.4.10
+Server has startup warnings:
+2018-02-01T13:37:08.245-0700 I CONTROL  [initandlisten]
+2018-02-01T13:37:08.245-0700 I CONTROL  [initandlisten] ** WARNING: Access control is not enabled for the database.
+2018-02-01T13:37:08.245-0700 I CONTROL  [initandlisten] **          Read and write access to data and configuration is unrestricted.
+2018-02-01T13:37:08.245-0700 I CONTROL  [initandlisten]
+> show dbs
+blog        0.000GB
+foo         0.000GB
+foo2        0.000GB
+local       0.000GB
+m101        0.000GB
+mng         0.038GB
+people      0.000GB
+person      0.000GB
+school      0.000GB
+students    0.000GB
+super       0.005GB
+super2      0.005GB
+test        0.028GB
+test2       0.000GB
+test3       0.000GB
+testunique  0.000GB
+testy       0.001GB
+video       0.000GB
+> use mng
+switched to db mng
+> db.example.find()
+{ "_id" : 0, "a" : 0, "b" : 0, "c" : 0 }
+{ "_id" : 1, "a" : 0, "b" : 0, "c" : 1 }
+{ "_id" : 2, "a" : 0, "b" : 0, "c" : 2 }
+{ "_id" : 3, "a" : 0, "b" : 0, "c" : 3 }
+{ "_id" : 4, "a" : 0, "b" : 0, "c" : 4 }
+{ "_id" : 5, "a" : 0, "b" : 0, "c" : 5 }
+{ "_id" : 6, "a" : 0, "b" : 0, "c" : 6 }
+{ "_id" : 7, "a" : 0, "b" : 0, "c" : 7 }
+{ "_id" : 8, "a" : 0, "b" : 0, "c" : 8 }
+{ "_id" : 9, "a" : 0, "b" : 0, "c" : 9 }
+{ "_id" : 10, "a" : 0, "b" : 0, "c" : 10 }
+{ "_id" : 11, "a" : 0, "b" : 0, "c" : 11 }
+{ "_id" : 12, "a" : 0, "b" : 0, "c" : 12 }
+{ "_id" : 13, "a" : 0, "b" : 0, "c" : 13 }
+{ "_id" : 14, "a" : 0, "b" : 0, "c" : 14 }
+{ "_id" : 15, "a" : 0, "b" : 0, "c" : 15 }
+{ "_id" : 16, "a" : 0, "b" : 0, "c" : 16 }
+{ "_id" : 17, "a" : 0, "b" : 0, "c" : 17 }
+{ "_id" : 18, "a" : 0, "b" : 0, "c" : 18 }
+{ "_id" : 19, "a" : 0, "b" : 0, "c" : 19 }
+Type "it" for more
+> db.example.getIndexes()
+[
+        {
+                "v" : 1,
+                "key" : {
+                        "_id" : 1
+                },
+                "name" : "_id_",
+                "ns" : "mng.example"
+        },
+        {
+                "v" : 1,
+                "key" : {
+                        "a" : 1,
+                        "b" : 1
+                },
+                "name" : "a_1_b_1",
+                "ns" : "mng.example"
+        },
+        {
+                "v" : 1,
+                "key" : {
+                        "b" : 1
+                },
+                "name" : "b_1",
+                "ns" : "mng.example"
+        }
+]
+
+> var x=db.example.explain("executionStats")
+> x.find({"a":10,"b"=10})
+2018-02-02T00:18:15.836+0300 E QUERY    [thread1] SyntaxError: missing : after property id @(shell):1:18
+> x.find({"a":10,"b":10})
+{
+        "queryPlanner" : {
+                "plannerVersion" : 1,
+                "namespace" : "mng.example",
+                "indexFilterSet" : false,
+                "parsedQuery" : {
+                        "$and" : [
+                                {
+                                        "a" : {
+                                                "$eq" : 10
+                                        }
+                                },
+                                {
+                                        "b" : {
+                                                "$eq" : 10
+                                        }
+                                }
+                        ]
+                },
+                "winningPlan" : {
+                        "stage" : "FETCH",
+                        "inputStage" : {
+                                "stage" : "IXSCAN",
+                                "keyPattern" : {
+                                        "a" : 1,
+                                        "b" : 1
+                                },
+                                "indexName" : "a_1_b_1",
+                                "isMultiKey" : false,
+                                "multiKeyPaths" : {
+                                        "a" : [ ],
+                                        "b" : [ ]
+                                },
+                                "isUnique" : false,
+                                "isSparse" : false,
+                                "isPartial" : false,
+                                "indexVersion" : 1,
+                                "direction" : "forward",
+                                "indexBounds" : {
+                                        "a" : [
+                                                "[10.0, 10.0]"
+                                        ],
+                                        "b" : [
+                                                "[10.0, 10.0]"
+                                        ]
+                                }
+                        }
+                },
+                "rejectedPlans" : [
+                        {
+                                "stage" : "FETCH",
+                                "filter" : {
+                                        "a" : {
+                                                "$eq" : 10
+                                        }
+                                },
+                                "inputStage" : {
+                                        "stage" : "IXSCAN",
+                                        "keyPattern" : {
+                                                "b" : 1
+                                        },
+                                        "indexName" : "b_1",
+                                        "isMultiKey" : false,
+                                        "multiKeyPaths" : {
+                                                "b" : [ ]
+                                        },
+                                        "isUnique" : false,
+                                        "isSparse" : false,
+                                        "isPartial" : false,
+                                        "indexVersion" : 1,
+                                        "direction" : "forward",
+                                        "indexBounds" : {
+                                                "b" : [
+                                                        "[10.0, 10.0]"
+                                                ]
+                                        }
+                                }
+                        }
+                ]
+        },
+        "executionStats" : {
+                "executionSuccess" : true,
+                "nReturned" : 100,                   //FACTOR == 1
+                "executionTimeMillis" : 588,
+                "totalKeysExamined" : 100,    //FACTOR == 2
+                "totalDocsExamined" : 100,      //FACTOR == 3
+                "executionStages" : {
+                        "stage" : "FETCH",
+                        "nReturned" : 100,
+                        "executionTimeMillisEstimate" : 91,
+                        "works" : 102,
+                        "advanced" : 100,
+                        "needTime" : 0,
+                        "needYield" : 0,
+                        "saveState" : 5,
+                        "restoreState" : 5,
+                        "isEOF" : 1,
+                        "invalidates" : 0,
+                        "docsExamined" : 100,
+                        "alreadyHasObj" : 0,
+                        "inputStage" : {
+                                "stage" : "IXSCAN",
+                                "nReturned" : 100,
+                                "executionTimeMillisEstimate" : 71,
+                                "works" : 101,
+                                "advanced" : 100,
+                                "needTime" : 0,
+                                "needYield" : 0,
+                                "saveState" : 5,
+                                "restoreState" : 5,
+                                "isEOF" : 1,
+                                "invalidates" : 0,
+                                "keyPattern" : {
+                                        "a" : 1,
+                                        "b" : 1
+                                },
+                                "indexName" : "a_1_b_1",
+                                "isMultiKey" : false,
+                                "multiKeyPaths" : {
+                                        "a" : [ ],
+                                        "b" : [ ]
+                                },
+                                "isUnique" : false,
+                                "isSparse" : false,
+                                "isPartial" : false,
+                                "indexVersion" : 1,
+                                "direction" : "forward",
+                                "indexBounds" : {
+                                        "a" : [
+                                                "[10.0, 10.0]"
+                                        ],
+                                        "b" : [
+                                                "[10.0, 10.0]"
+                                        ]
+                                },
+                                "keysExamined" : 100,
+                                "seeks" : 1,
+                                "dupsTested" : 0,
+                                "dupsDropped" : 0,
+                                "seenInvalidated" : 0
+                        }
+                }
+        },
+        "serverInfo" : {
+                "host" : "DESKTOP-88GJBMO",
+                "port" : 27017,
+                "version" : "3.4.10",
+                "gitVersion" : "078f28920cb24de0dd479b5ea6c66c644f6326e9"
+        },
+        "ok" : 1
+}
+----------------OUTPUT OF SAME EXPLAIN METHOD-----------------------------
+> db.example.find({"a":10,"b":10})
+{ "_id" : 101000, "a" : 10, "b" : 10, "c" : 0 }
+{ "_id" : 101001, "a" : 10, "b" : 10, "c" : 1 }
+{ "_id" : 101002, "a" : 10, "b" : 10, "c" : 2 }
+{ "_id" : 101003, "a" : 10, "b" : 10, "c" : 3 }
+{ "_id" : 101004, "a" : 10, "b" : 10, "c" : 4 }
+{ "_id" : 101005, "a" : 10, "b" : 10, "c" : 5 }
+{ "_id" : 101006, "a" : 10, "b" : 10, "c" : 6 }
+{ "_id" : 101007, "a" : 10, "b" : 10, "c" : 7 }
+{ "_id" : 101008, "a" : 10, "b" : 10, "c" : 8 }
+{ "_id" : 101009, "a" : 10, "b" : 10, "c" : 9 }
+{ "_id" : 101010, "a" : 10, "b" : 10, "c" : 10 }
+{ "_id" : 101011, "a" : 10, "b" : 10, "c" : 11 }
+{ "_id" : 101012, "a" : 10, "b" : 10, "c" : 12 }
+{ "_id" : 101013, "a" : 10, "b" : 10, "c" : 13 }
+{ "_id" : 101014, "a" : 10, "b" : 10, "c" : 14 }
+{ "_id" : 101015, "a" : 10, "b" : 10, "c" : 15 }
+{ "_id" : 101016, "a" : 10, "b" : 10, "c" : 16 }
+{ "_id" : 101017, "a" : 10, "b" : 10, "c" : 17 }
+{ "_id" : 101018, "a" : 10, "b" : 10, "c" : 18 }
+{ "_id" : 101019, "a" : 10, "b" : 10, "c" : 19 }
+Type "it" for more
+***********************************************************************************
+CREATING AN INDEX THAT HAS ALL VALUE OF ATTRIBUTE
+***********************************************************************************
+> db.example.createIndex({a:1,b:1,c:1})
+{
+        "createdCollectionAutomatically" : false,
+        "numIndexesBefore" : 3,
+        "numIndexesAfter" : 4,
+        "ok" : 1
+}
+========================
+QUERY : MENTIONING ALL ATTRIBUTES
+========================
+> x.find({"a":10,"b":10},{_id:0,a:1,b:1, c:1})
+{
+        "queryPlanner" : {
+                "plannerVersion" : 1,
+                "namespace" : "mng.example",
+                "indexFilterSet" : false,
+                "parsedQuery" : {
+                        "$and" : [
+                                {
+                                        "a" : {
+                                                "$eq" : 10
+                                        }
+                                },
+                                {
+                                        "b" : {
+                                                "$eq" : 10
+                                        }
+                                }
+                        ]
+                },
+                "winningPlan" : {
+                        "stage" : "PROJECTION",
+                        "transformBy" : {
+                                "_id" : 0,
+                                "a" : 1,
+                                "b" : 1,
+                                "c" : 1
+                        },
+                        "inputStage" : {
+                                "stage" : "IXSCAN",
+                                "keyPattern" : {
+                                        "a" : 1,
+                                        "b" : 1,
+                                        "c" : 1
+                                },
+                                "indexName" : "a_1_b_1_c_1",
+                                "isMultiKey" : false,
+                                "multiKeyPaths" : {
+                                        "a" : [ ],
+                                        "b" : [ ],
+                                        "c" : [ ]
+                                },
+                                "isUnique" : false,
+                                "isSparse" : false,
+                                "isPartial" : false,
+                                "indexVersion" : 1,
+                                "direction" : "forward",
+                                "indexBounds" : {
+                                        "a" : [
+                                                "[10.0, 10.0]"
+                                        ],
+                                        "b" : [
+                                                "[10.0, 10.0]"
+                                        ],
+                                        "c" : [
+                                                "[MinKey, MaxKey]"
+                                        ]
+                                }
+                        }
+                },
+                "rejectedPlans" : [
+                        {
+                                "stage" : "PROJECTION",
+                                "transformBy" : {
+                                        "_id" : 0,
+                                        "a" : 1,
+                                        "b" : 1,
+                                        "c" : 1
+                                },
+                                "inputStage" : {
+                                        "stage" : "FETCH",
+                                        "filter" : {
+                                                "a" : {
+                                                        "$eq" : 10
+                                                }
+                                        },
+                                        "inputStage" : {
+                                                "stage" : "IXSCAN",
+                                                "keyPattern" : {
+                                                        "b" : 1
+                                                },
+                                                "indexName" : "b_1",
+                                                "isMultiKey" : false,
+                                                "multiKeyPaths" : {
+                                                        "b" : [ ]
+                                                },
+                                                "isUnique" : false,
+                                                "isSparse" : false,
+                                                "isPartial" : false,
+                                                "indexVersion" : 1,
+                                                "direction" : "forward",
+                                                "indexBounds" : {
+                                                        "b" : [
+                                                                "[10.0, 10.0]"
+                                                        ]
+                                                }
+                                        }
+                                }
+                        },
+                        {
+                                "stage" : "PROJECTION",
+                                "transformBy" : {
+                                        "_id" : 0,
+                                        "a" : 1,
+                                        "b" : 1,
+                                        "c" : 1
+                                },
+                                "inputStage" : {
+                                        "stage" : "FETCH",
+                                        "inputStage" : {
+                                                "stage" : "IXSCAN",
+                                                "keyPattern" : {
+                                                        "a" : 1,
+                                                        "b" : 1
+                                                },
+                                                "indexName" : "a_1_b_1",
+                                                "isMultiKey" : false,
+                                                "multiKeyPaths" : {
+                                                        "a" : [ ],
+                                                        "b" : [ ]
+                                                },
+                                                "isUnique" : false,
+                                                "isSparse" : false,
+                                                "isPartial" : false,
+                                                "indexVersion" : 1,
+                                                "direction" : "forward",
+                                                "indexBounds" : {
+                                                        "a" : [
+                                                                "[10.0, 10.0]"
+                                                        ],
+                                                        "b" : [
+                                                                "[10.0, 10.0]"
+                                                        ]
+                                                }
+                                        }
+                                }
+                        }
+                ]
+        },
+        "executionStats" : {
+                "executionSuccess" : true,
+                "nReturned" : 100,         //FACTOR == 1
+                "executionTimeMillis" : 20,     
+                "totalKeysExamined" : 100,     //FACTOR == 2
+                "totalDocsExamined" : 0,            //FACTOR == 3 ========COVERED QUERY
+                "executionStages" : {
+                        "stage" : "PROJECTION",
+                        "nReturned" : 100,
+                        "executionTimeMillisEstimate" : 31,
+                        "works" : 102,
+                        "advanced" : 100,
+                        "needTime" : 0,
+                        "needYield" : 0,
+                        "saveState" : 4,
+                        "restoreState" : 4,
+                        "isEOF" : 1,
+                        "invalidates" : 0,
+                        "transformBy" : {
+                                "_id" : 0,
+                                "a" : 1,
+                                "b" : 1,
+                                "c" : 1
+                        },
+                        "inputStage" : {
+                                "stage" : "IXSCAN",
+                                "nReturned" : 100,
+                                "executionTimeMillisEstimate" : 31,
+                                "works" : 102,
+                                "advanced" : 100,
+                                "needTime" : 0,
+                                "needYield" : 0,
+                                "saveState" : 4,
+                                "restoreState" : 4,
+                                "isEOF" : 1,
+                                "invalidates" : 0,
+                                "keyPattern" : {
+                                        "a" : 1,
+                                        "b" : 1,
+                                        "c" : 1
+                                },
+                                "indexName" : "a_1_b_1_c_1",
+                                "isMultiKey" : false,
+                                "multiKeyPaths" : {
+                                        "a" : [ ],
+                                        "b" : [ ],
+                                        "c" : [ ]
+                                },
+                                "isUnique" : false,
+                                "isSparse" : false,
+                                "isPartial" : false,
+                                "indexVersion" : 1,
+                                "direction" : "forward",
+                                "indexBounds" : {
+                                        "a" : [
+                                                "[10.0, 10.0]"
+                                        ],
+                                        "b" : [
+                                                "[10.0, 10.0]"
+                                        ],
+                                        "c" : [
+                                                "[MinKey, MaxKey]"
+                                        ]
+                                },
+                                "keysExamined" : 100,
+                                "seeks" : 1,
+                                "dupsTested" : 0,
+                                "dupsDropped" : 0,
+                                "seenInvalidated" : 0
+                        }
+                }
+        },
+        "serverInfo" : {
+                "host" : "DESKTOP-88GJBMO",
+                "port" : 27017,
+                "version" : "3.4.10",
+                "gitVersion" : "078f28920cb24de0dd479b5ea6c66c644f6326e9"
+        },
+        "ok" : 1
+}
+***********************************************************************************
+MENTIONING ONE ATTRIBUTE : THAT DOESNT MAKE SENCE WITH THE INDEXER
+***********************************************************************************
+> x.find({"a":10,"b":10},{_id:0})
+{
+        "queryPlanner" : {
+                "plannerVersion" : 1,
+                "namespace" : "mng.example",
+                "indexFilterSet" : false,
+                "parsedQuery" : {
+                        "$and" : [
+                                {
+                                        "a" : {
+                                                "$eq" : 10
+                                        }
+                                },
+                                {
+                                        "b" : {
+                                                "$eq" : 10
+                                        }
+                                }
+                        ]
+                },
+                "winningPlan" : {
+                        "stage" : "PROJECTION",
+                        "transformBy" : {
+                                "_id" : 0
+                        },
+                        "inputStage" : {
+                                "stage" : "FETCH",
+                                "inputStage" : {
+                                        "stage" : "IXSCAN",
+                                        "keyPattern" : {
+                                                "a" : 1,
+                                                "b" : 1,
+                                                "c" : 1
+                                        },
+                                        "indexName" : "a_1_b_1_c_1", //REJECTING a_1_b_1
+                                        "isMultiKey" : false,
+                                        "multiKeyPaths" : {
+                                                "a" : [ ],
+                                                "b" : [ ],
+                                                "c" : [ ]
+                                        },
+                                        "isUnique" : false,
+                                        "isSparse" : false,
+                                        "isPartial" : false,
+                                        "indexVersion" : 1,
+                                        "direction" : "forward",
+                                        "indexBounds" : {
+                                                "a" : [
+                                                        "[10.0, 10.0]"
+                                                ],
+                                                "b" : [
+                                                        "[10.0, 10.0]"
+                                                ],
+                                                "c" : [
+                                                        "[MinKey, MaxKey]"
+                                                ]
+                                        }
+                                }
+                        }
+                },
+                "rejectedPlans" : [
+                        {
+                                "stage" : "PROJECTION",
+                                "transformBy" : {
+                                        "_id" : 0
+                                },
+                                "inputStage" : {
+                                        "stage" : "FETCH",
+                                        "filter" : {
+                                                "a" : {
+                                                        "$eq" : 10
+                                                }
+                                        },
+                                        "inputStage" : {
+                                                "stage" : "IXSCAN",
+                                                "keyPattern" : {
+                                                        "b" : 1
+                                                },
+                                                "indexName" : "b_1",
+                                                "isMultiKey" : false,
+                                                "multiKeyPaths" : {
+                                                        "b" : [ ]
+                                                },
+                                                "isUnique" : false,
+                                                "isSparse" : false,
+                                                "isPartial" : false,
+                                                "indexVersion" : 1,
+                                                "direction" : "forward",
+                                                "indexBounds" : {
+                                                        "b" : [
+                                                                "[10.0, 10.0]"
+                                                        ]
+                                                }
+                                        }
+                                }
+                        },
+                        {
+                                "stage" : "PROJECTION",
+                                "transformBy" : {
+                                        "_id" : 0
+                                },
+                                "inputStage" : {
+                                        "stage" : "FETCH",
+                                        "inputStage" : {
+                                                "stage" : "IXSCAN",
+                                                "keyPattern" : {
+                                                        "a" : 1,
+                                                        "b" : 1
+                                                },
+                                                "indexName" : "a_1_b_1",
+                                                "isMultiKey" : false,
+                                                "multiKeyPaths" : {
+                                                        "a" : [ ],
+                                                        "b" : [ ]
+                                                },
+                                                "isUnique" : false,
+                                                "isSparse" : false,
+                                                "isPartial" : false,
+                                                "indexVersion" : 1,
+                                                "direction" : "forward",
+                                                "indexBounds" : {
+                                                        "a" : [
+                                                                "[10.0, 10.0]"
+                                                        ],
+                                                        "b" : [
+                                                                "[10.0, 10.0]"
+                                                        ]
+                                                }
+                                        }
+                                }
+                        }
+                ]
+        },
+        "executionStats" : {
+                "executionSuccess" : true,
+                "nReturned" : 100,            //FACTOR == 1
+                "executionTimeMillis" : 27,
+                "totalKeysExamined" : 100,  //FACTOR == 2
+                "totalDocsExamined" : 100,  //FACTOR == 3
+                "executionStages" : {
+                        "stage" : "PROJECTION",
+                        "nReturned" : 100,
+                        "executionTimeMillisEstimate" : 0,
+                        "works" : 102,
+                        "advanced" : 100,
+                        "needTime" : 0,
+                        "needYield" : 0,
+                        "saveState" : 3,
+                        "restoreState" : 3,
+                        "isEOF" : 1,
+                        "invalidates" : 0,
+                        "transformBy" : {
+                                "_id" : 0
+                        },
+                        "inputStage" : {
+                                "stage" : "FETCH",
+                                "nReturned" : 100,
+                                "executionTimeMillisEstimate" : 0,
+                                "works" : 102,
+                                "advanced" : 100,
+                                "needTime" : 0,
+                                "needYield" : 0,
+                                "saveState" : 3,
+                                "restoreState" : 3,
+                                "isEOF" : 1,
+                                "invalidates" : 0,
+                                "docsExamined" : 100,
+                                "alreadyHasObj" : 0,
+                                "inputStage" : {
+                                        "stage" : "IXSCAN",
+                                        "nReturned" : 100,
+                                        "executionTimeMillisEstimate" : 0,
+                                        "works" : 101,
+                                        "advanced" : 100,
+                                        "needTime" : 0,
+                                        "needYield" : 0,
+                                        "saveState" : 3,
+                                        "restoreState" : 3,
+                                        "isEOF" : 1,
+                                        "invalidates" : 0,
+                                        "keyPattern" : {
+                                                "a" : 1,
+                                                "b" : 1,
+                                                "c" : 1
+                                        },
+                                        "indexName" : "a_1_b_1_c_1",
+                                        "isMultiKey" : false,
+                                        "multiKeyPaths" : {
+                                                "a" : [ ],
+                                                "b" : [ ],
+                                                "c" : [ ]
+                                        },
+                                        "isUnique" : false,
+                                        "isSparse" : false,
+                                        "isPartial" : false,
+                                        "indexVersion" : 1,
+                                        "direction" : "forward",
+                                        "indexBounds" : {
+                                                "a" : [
+                                                        "[10.0, 10.0]"
+                                                ],
+                                                "b" : [
+                                                        "[10.0, 10.0]"
+                                                ],
+                                                "c" : [
+                                                        "[MinKey, MaxKey]"
+                                                ]
+                                        },
+                                        "keysExamined" : 100,
+                                        "seeks" : 1,
+                                        "dupsTested" : 0,
+                                        "dupsDropped" : 0,
+                                        "seenInvalidated" : 0
+                                }
+                        }
+                }
+        },
+        "serverInfo" : {
+                "host" : "DESKTOP-88GJBMO",
+                "port" : 27017,
+                "version" : "3.4.10",
+                "gitVersion" : "078f28920cb24de0dd479b5ea6c66c644f6326e9"
+        },
+        "ok" : 1
+}
+>

@@ -1,0 +1,223 @@
+********************************************************************************************
+creating BANKdb
+********************************************************************************************
+
+> db.Bank.find(
+    "age":{$gt:23}
+)
+2017-11-02T02:52:39.209+0300 E QUERY    [thread1] SyntaxError: missing ) after argument list @(shell):2:9
+
+********************************************************************************************
+searching with condition
+********************************************************************************************
+> db.Bank.find(
+    {"age": {$gt: 23}}
+)
+{ "_id" : ObjectId("59fa5a6ece3974ab1a4e581a"), "isActive" : false, "balance" : "$3,960.64", "age" : 30, "eyeColor" : "blue", "name" : "Dawn Keith", "gender" : "female", "company" : "COSMOSIS", "email" : "dawnkeith@cosmosis.com", "phone" : "+1 (839) 437-3421", "address" : "392 Clifford Place, Fontanelle, Arizona, 2687" }
+{ "_id" : ObjectId("59fa5a6ece3974ab1a4e581b"), "isActive" : false, "balance" : "$1,280.14", "age" : 31, "eyeColor" : "green", "name" : "Bettie Eaton", "gender" : "female", "company" : "COMTREK", "email" : "bettieeaton@comtrek.com", "phone" : "+1 (861) 460-2317", "address" : "203 Allen Avenue, Elrama, North Carolina, 4453" }
+{ "_id" : ObjectId("59fa5a6ece3974ab1a4e581c"), "isActive" : true, "balance" : "$2,042.37", "age" : 38, "eyeColor" : "green", "name" : "Margie Ayala", "gender" : "female", "company" : "VOIPA", "email" : "margieayala@voipa.com", "phone" : "+1 (941) 569-2231", "address" : "111 Schroeders Avenue, Suitland, Louisiana, 7042" }
+{ "_id" : ObjectId("59fa5a6ece3974ab1a4e581d"), "isActive" : false, "balance" : "$3,170.35", "age" : 37, "eyeColor" : "blue", "name" : "Baker Townsend", "gender" : "male", "company" : "EVIDENDS", "email" : "bakertownsend@evidends.com", "phone" : "+1 (808) 500-2793", "address" : "190 Just Court, Canoochee, Alabama, 325" }
+{ "_id" : ObjectId("59fa5a6ece3974ab1a4e581e"), "isActive" : false, "balance" : "$1,402.05", "age" : 29, "eyeColor" : "blue", "name" : "Annmarie Atkinson", "gender" : "female", "company" : "MEDESIGN", "email" : "annmarieatkinson@medesign.com", "phone" : "+1 (928) 524-3812", "address" : "757 Beaumont Street, Santel, West Virginia, 3370" }
+{ "_id" : ObjectId("59fa5a6ece3974ab1a4e581f"), "isActive" : false, "balance" : "$1,404.23", "age" : 26, "eyeColor" : "blue", "name" : "Stark Jenkins", "gender" : "male", "company" : "HINWAY", "email" : "starkjenkins@hinway.com", "phone" : "+1 (943) 542-3591", "address" : "766 Cooke Court, Dunbar, Connecticut, 9512" }
+{ "_id" : ObjectId("59fa5a6ece3974ab1a4e5820"), "isActive" : false, "balance" : "$1,247.08", "age" : 36, "eyeColor" : "green", "name" : "Odonnell Rollins", "gender" : "male", "company" : "NEXGENE", "email" : "odonnellrollins@nexgene.com", "phone" : "+1 (810) 521-2350", "address" : "210 Pleasant Place, Lloyd, Mississippi, 1636" }
+{ "_id" : ObjectId("59fa5a6ece3974ab1a4e5822"), "isActive" : true, "balance" : "$1,624.60", "age" : 39, "eyeColor" : "brown", "name" : "Davis Wade", "gender" : "male", "company" : "ASSISTIX", "email" : "daviswade@assistix.com", "phone" : "+1 (836) 432-2542", "address" : "532 Amity Street, Yukon, Palau, 3561" }
+{ "_id" : ObjectId("59fa5a6ece3974ab1a4e5825"), "isActive" : false, "balance" : "$3,125.30", "age" : 37, "eyeColor" : "green", "name" : "Howard Serrano", "gender" : "male", "company" : "INJOY", "email" : "howardserrano@injoy.com", "phone" : "+1 (829) 406-3577", "address" : "887 Willoughby Street, Wyoming, American Samoa, 6237" }
+{ "_id" : ObjectId("59fa5a6ece3974ab1a4e5826"), "isActive" : true, "balance" : "$2,891.79", "age" : 34, "eyeColor" : "brown", "name" : "Mills Reyes", "gender" : "male", "company" : "LUXURIA", "email" : "millsreyes@luxuria.com", "phone" : "+1 (983) 423-3866", "address" : "793 Tabor Court, Coultervillle, Colorado, 4179" }
+{ "_id" : ObjectId("59fa5a6ece3974ab1a4e5827"), "isActive" : false, "balance" : "$2,636.88", "age" : 34, "eyeColor" : "green", "name" : "Pearl Coffey", "gender" : "female", "company" : "IPLAX", "email" : "pearlcoffey@iplax.com", "phone" : "+1 (891) 470-3257", "address" : "411 Verona Place, Franklin, Arkansas, 9044" }
+{ "_id" : ObjectId("59fa5a6ece3974ab1a4e5828"), "isActive" : true, "balance" : "$1,579.74", "age" : 24, "eyeColor" : "brown", "name" : "Tommie Chase", "gender" : "female", "company" : "UBERLUX", "email" : "tommiechase@uberlux.com", "phone" : "+1 (828) 497-2089", "address" : "705 Halsey Street, Datil, Florida, 7036" }
+{ "_id" : ObjectId("59fa5a6ece3974ab1a4e5829"), "isActive" : false, "balance" : "$3,749.56", "age" : 32, "eyeColor" : "green", "name" : "Frost Mayer", "gender" : "male", "company" : "SYNKGEN", "email" : "frostmayer@synkgen.com", "phone" : "+1 (883) 461-2362", "address" : "558 Tapscott Avenue, Vernon, Washington, 807" }
+{ "_id" : ObjectId("59fa5a6ece3974ab1a4e582a"), "isActive" : true, "balance" : "$1,921.51", "age" : 24, "eyeColor" : "green", "name" : "Mercado Sweeney", "gender" : "male", "company" : "TASMANIA", "email" : "mercadosweeney@tasmania.com", "phone" : "+1 (976) 490-3620", "address" : "799 Jefferson Street, Cuylerville, Delaware, 4823" }
+{ "_id" : ObjectId("59fa5a6ece3974ab1a4e582b"), "isActive" : true, "balance" : "$2,007.78", "age" : 38, "eyeColor" : "brown", "name" : "Potts Humphrey", "gender" : "male", "company" : "PASTURIA", "email" : "pottshumphrey@pasturia.com", "phone" : "+1 (975) 549-2709", "address" : "819 Scott Avenue, Brutus, Missouri, 2819" }
+{ "_id" : ObjectId("59fa5a6ece3974ab1a4e582c"), "isActive" : false, "balance" : "$1,860.16", "age" : 30, "eyeColor" : "green", "name" : "Garrison Richardson", "gender" : "male", "company" : "KIGGLE", "email" : "garrisonrichardson@kiggle.com", "phone" : "+1 (858) 402-2835", "address" : "572 Woodpoint Road, Kempton, Minnesota, 2645" }
+{ "_id" : ObjectId("59fa5a6ece3974ab1a4e582d"), "isActive" : true, "balance" : "$1,611.65", "age" : 40, "eyeColor" : "green", "name" : "Owen Hood", "gender" : "male", "company" : "POSHOME", "email" : "owenhood@poshome.com", "phone" : "+1 (984) 464-2373", "address" : "195 Cass Place, Siglerville, Montana, 9548" }
+{ "_id" : ObjectId("59fa5a6ece3974ab1a4e582e"), "isActive" : true, "balance" : "$2,385.82", "age" : 35, "eyeColor" : "green", "name" : "Erna Cline", "gender" : "female", "company" : "ARCHITAX", "email" : "ernacline@architax.com", "phone" : "+1 (921) 525-2437", "address" : "153 Autumn Avenue, Veguita, South Carolina, 743" }
+{ "_id" : ObjectId("59fa5a6ece3974ab1a4e582f"), "isActive" : false, "balance" : "$2,090.31", "age" : 36, "eyeColor" : "green", "name" : "Benita Barr", "gender" : "female", "company" : "SLOFAST", "email" : "benitabarr@slofast.com", "phone" : "+1 (831) 525-2895", "address" : "885 Seton Place, Steinhatchee, Kentucky, 1146" }
+{ "_id" : ObjectId("59fa5a6ece3974ab1a4e5830"), "isActive" : true, "balance" : "$3,837.05", "age" : 35, "eyeColor" : "blue", "name" : "Milagros Cochran", "gender" : "female", "company" : "FLUMBO", "email" : "milagroscochran@flumbo.com", "phone" : "+1 (878) 534-2114", "address" : "273 Ludlam Place, Darrtown, Northern Mariana Islands, 8800" }
+Type "it" for more
+
+********************************************************************************************
+measuring executionStates  ["nReturned" : 31,] --------UNINDEXED condition
+********************************************************************************************
+
+>  db.Bank.find(
+    {"age": {$gt: 23}}
+).explain("executionStats")
+{
+	"queryPlanner" : {
+		"plannerVersion" : 1,
+		"namespace" : "young.Bank",
+		"indexFilterSet" : false,
+		"parsedQuery" : {
+			"age" : {
+				"$gt" : 23
+			}
+		},
+		"winningPlan" : {
+			"stage" : "COLLSCAN",
+			"filter" : {
+				"age" : {
+					"$gt" : 23
+				}
+			},
+			"direction" : "forward"
+		},
+		"rejectedPlans" : [ ]
+	},
+	"executionStats" : {
+		"executionSuccess" : true,
+		"nReturned" : 31,
+		"executionTimeMillis" : 0,
+		"totalKeysExamined" : 0,
+		"totalDocsExamined" : 35,
+		"executionStages" : {
+			"stage" : "COLLSCAN",
+			"filter" : {
+				"age" : {
+					"$gt" : 23
+				}
+			},
+			"nReturned" : 31,
+			"executionTimeMillisEstimate" : 0,
+			"works" : 37,
+			"advanced" : 31,
+			"needTime" : 5,
+			"needYield" : 0,
+			"saveState" : 0,
+			"restoreState" : 0,
+			"isEOF" : 1,
+			"invalidates" : 0,
+			"direction" : "forward",
+			"docsExamined" : 35
+		}
+	},
+	"serverInfo" : {
+		"host" : "DESKTOP-88GJBMO",
+		"port" : 27017,
+		"version" : "3.4.10",
+		"gitVersion" : "078f28920cb24de0dd479b5ea6c66c644f6326e9"
+	},
+	"ok" : 1
+}
+
+********************************************************************************************
+creating Indexers
+********************************************************************************************
+> db.users.ensureIndex({"age":1})
+{
+	"createdCollectionAutomatically" : false,
+	"numIndexesBefore" : 1,
+	"numIndexesAfter" : 2,
+	"ok" : 1
+}
+
+********************************************************************************************
+checking indexers are there or not [default _id is an indexers]
+********************************************************************************************
+> db.users.getIndexes()
+[
+	{
+		"v" : 2,
+		"key" : {
+			"_id" : 1
+		},
+		"name" : "_id_",
+		"ns" : "young.users"
+	},
+	{
+		"v" : 2,
+		"key" : {
+			"age" : 1
+		},
+		"name" : "age_1",
+		"ns" : "young.users"
+	}
+]
+
+********************************************************************************************
+measuring executionStates  ["nReturned" : 2,] --------INDEXED condition
+********************************************************************************************
+> db.Bank.find(
+    {"age": {$lt:23}}
+).explain("executionStats")
+{
+	"queryPlanner" : {
+		"plannerVersion" : 1,
+		"namespace" : "young.Bank",
+		"indexFilterSet" : false,
+		"parsedQuery" : {
+			"age" : {
+				"$lt" : 23
+			}
+		},
+		"winningPlan" : {
+			"stage" : "COLLSCAN",
+			"filter" : {
+				"age" : {
+					"$lt" : 23
+				}
+			},
+			"direction" : "forward"
+		},
+		"rejectedPlans" : [ ]
+	},
+	"executionStats" : {
+		"executionSuccess" : true,
+		"nReturned" : 2,
+		"executionTimeMillis" : 0,
+		"totalKeysExamined" : 0,
+		"totalDocsExamined" : 35,
+		"executionStages" : {
+			"stage" : "COLLSCAN",
+			"filter" : {
+				"age" : {
+					"$lt" : 23
+				}
+			},
+			"nReturned" : 2,
+			"executionTimeMillisEstimate" : 0,
+			"works" : 37,
+			"advanced" : 2,
+			"needTime" : 34,
+			"needYield" : 0,
+			"saveState" : 0,
+			"restoreState" : 0,
+			"isEOF" : 1,
+			"invalidates" : 0,
+			"direction" : "forward",
+			"docsExamined" : 35
+		}
+	},
+	"serverInfo" : {
+		"host" : "DESKTOP-88GJBMO",
+		"port" : 27017,
+		"version" : "3.4.10",
+		"gitVersion" : "078f28920cb24de0dd479b5ea6c66c644f6326e9"
+	},
+	"ok" : 1
+}
+
+********************************************************************************************
+DROPING INDEX
+********************************************************************************************
+> db.Bank.dropIndex({"age": 1})
+{
+	"nIndexesWas" : 1,
+	"ok" : 0,
+	"errmsg" : "can't find index with key: { age: 1.0 }",
+	"code" : 27,
+	"codeName" : "IndexNotFound"
+}
+********************************************************************************************
+CHECKING
+********************************************************************************************
+> db.Bank.getIndexes()
+[
+	{
+		"v" : 2,
+		"key" : {
+			"_id" : 1
+		},
+		"name" : "_id_",
+		"ns" : "young.Bank"
+	}
+]

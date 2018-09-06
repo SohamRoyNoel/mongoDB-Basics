@@ -1,0 +1,46 @@
+:\Program Files\MongoDB\Server\3.4\bin\mongo.exe
+MongoDB shell version v3.4.10
+connecting to: mongodb://localhost:27017/test
+MongoDB server version: 3.4.10
+*****************************************************
+DATABASE
+*****************************************************
+> db.inventory.find()
+{ "_id" : ObjectId("5a6232e2691f1de4b36468bf"), "item" : "journal", "status" : "A", "size" : { "h" : 14, "w" : 21, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c0"), "item" : "notebook", "status" : "A", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ { "warehouse" : "C", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c1"), "item" : "paper", "status" : "D", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ { "warehouse" : "A", "qty" : 60 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c2"), "item" : "planner", "status" : "D", "size" : { "h" : 22.85, "w" : 30, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 40 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c3"), "item" : "postcard", "status" : "A", "size" : { "h" : 10, "w" : 15.25, "uom" : "cm" }, "instock" : [ { "warehouse" : "B", "qty" : 15 }, { "warehouse" : "C", "qty" : 35 } ] }
+*****************************************************
+$OR : always takes value in arrray
+*****************************************************
+> db.inventory.find({$or: [{"size.h":"10"}, {"instock.warehouse":"A"}]})
+{ "_id" : ObjectId("5a6232e2691f1de4b36468bf"), "item" : "journal", "status" : "A", "size" : { "h" : 14, "w" : 21, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c1"), "item" : "paper", "status" : "D", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ { "warehouse" : "A", "qty" : 60 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c2"), "item" : "planner", "status" : "D", "size" : { "h" : 22.85, "w" : 30, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 40 } ] }
+*****************************************************
+2
+*****************************************************
+> db.inventory.find({$or: [{"size.h":"8.5"}, {"instock.warehouse":"A"}]})
+{ "_id" : ObjectId("5a6232e2691f1de4b36468bf"), "item" : "journal", "status" : "A", "size" : { "h" : 14, "w" : 21, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c1"), "item" : "paper", "status" : "D", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ { "warehouse" : "A", "qty" : 60 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c2"), "item" : "planner", "status" : "D", "size" : { "h" : 22.85, "w" : 30, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 40 } ] }
+*****************************************************
+$and : works almost like elements that find()
+*****************************************************
+> db.inventory.find({$and:[{"size.h":14},{"instock.warehouse":"A"}]})
+{ "_id" : ObjectId("5a6232e2691f1de4b36468bf"), "item" : "journal", "status" : "A", "size" : { "h" : 14, "w" : 21, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 5 } ] }
+*****************************************************
+find() that gives the same result like $and:
+*****************************************************
+> db.inventory.find({"size.h":14},{"instock.warehouse":"A"})
+{ "_id" : ObjectId("5a6232e2691f1de4b36468bf"), "instock" : [ { "warehouse" : "A" } ] }
+> db.inventory.find({"size.h":14},{"instock.warehouse":"A"},{"item":1, "status":1, "_id":0})
+{ "_id" : ObjectId("5a6232e2691f1de4b36468bf"), "instock" : [ { "warehouse" : "A" } ] }
+*****************************************************
+and can only be used when we query on a same touple LIKE BELLOW
+*****************************************************
+> db.inventory.find({$and:[{"size.h":{$ne:null}},{"size.h":{$exists:true}}]}).count()
+5
+> db.inventory.find({$and:[{"size.h":{$ne:null}},{"size.h":{$exists:false}}]}).count()
+0

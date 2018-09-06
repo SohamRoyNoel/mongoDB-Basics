@@ -1,0 +1,168 @@
+Microsoft Windows [Version 10.0.15063]
+(c) 2017 Microsoft Corporation. All rights reserved.
+
+C:\Users\HP>mongo
+MongoDB shell version v3.4.10
+connecting to: mongodb://127.0.0.1:27017
+MongoDB server version: 3.4.10
+Server has startup warnings:
+2018-02-02T09:25:46.299-0700 I CONTROL  [initandlisten]
+2018-02-02T09:25:46.303-0700 I CONTROL  [initandlisten] ** WARNING: Access control is not enabled for the database.
+2018-02-02T09:25:46.304-0700 I CONTROL  [initandlisten] **          Read and write access to data and configuration is unrestricted.
+2018-02-02T09:25:46.304-0700 I CONTROL  [initandlisten]
+> use location
+switched to db location
+> db.stores.insert({"name":"Apple Shop", "city":"Kolkata","location":{"type":"Point", "coordinates":[-122.25,36.525]},"type":"Retail"})
+WriteResult({ "nInserted" : 1 })
+> db.stores.insert({"name":"BMW", "city":"Kolkata","location":{"type":"Point", "coordinates":[-150.25,89.525]},"type":"Retail"})
+WriteResult({ "nInserted" : 1 })
+> db.stores.insert({"name":"Infinity", "city":"Kolkata","location":{"type":"Point", "coordinates":[-15.25,45.525]},"type":"Retail"})
+WriteResult({ "nInserted" : 1 })
+> db.stores.insert({"name":"Nicco Park", "city":"Kolkata","location":{"type":"Point", "coordinates":[-150.25,450.525]},"type":"Retail"})
+WriteResult({ "nInserted" : 1 })
+> db.stores.find().pretty()
+{
+        "_id" : ObjectId("5a74a399a410270f178faf11"),
+        "name" : "Apple Shop",
+        "city" : "Kolkata",
+        "location" : {
+                "type" : "Point",
+                "coordinates" : [
+                        -122.25,
+                        36.525
+                ]
+        },
+        "type" : "Retail"
+}
+{
+        "_id" : ObjectId("5a74a3cda410270f178faf12"),
+        "name" : "BMW",
+        "city" : "Kolkata",
+        "location" : {
+                "type" : "Point",
+                "coordinates" : [
+                        -150.25,
+                        89.525
+                ]
+        },
+        "type" : "Retail"
+}
+{
+        "_id" : ObjectId("5a74a3eea410270f178faf13"),
+        "name" : "Infinity",
+        "city" : "Kolkata",
+        "location" : {
+                "type" : "Point",
+                "coordinates" : [
+                        -15.25,
+                        45.525
+                ]
+        },
+        "type" : "Retail"
+}
+{
+        "_id" : ObjectId("5a74a42ea410270f178faf14"),
+        "name" : "Nicco Park",
+        "city" : "Kolkata",
+        "location" : {
+                "type" : "Point",
+                "coordinates" : [
+                        -150.25,
+                        450.525
+                ]
+        },
+        "type" : "Retail"
+}
+> db.stores.ensureIndex({"location":"2dsphere"})
+{
+        "ok" : 0,
+        "errmsg" : "Can't extract geo keys: { _id: ObjectId('5a74a42ea410270f178faf14'), name: \"Nicco Park\", city: \"Kolkata\", location: { type: \"Point\", coordinates: [ -150.25, 450.525 ] }, type: \"Retail\" }  longitude/latitude is out of bounds, lng: -150.25 lat: 450.525",
+        "code" : 16755,
+        "codeName" : "Location16755"
+}
+> db.stores.remove({"name":"Nicco Park"})
+WriteResult({ "nRemoved" : 1 })
+> db.stores.ensureIndex({"location":"2dsphere"})
+{
+        "createdCollectionAutomatically" : false,
+        "numIndexesBefore" : 1,
+        "numIndexesAfter" : 2,
+        "ok" : 1
+}
+> db.places.getIndexes()
+[ ]
+> db.stores.getIndexes()
+[
+        {
+                "v" : 1,
+                "key" : {
+                        "_id" : 1
+                },
+                "name" : "_id_",
+                "ns" : "location.stores"
+        },
+        {
+                "v" : 1,
+                "key" : {
+                        "location" : "2dsphere"
+                },
+                "name" : "location_2dsphere",
+                "ns" : "location.stores",
+                "2dsphereIndexVersion" : 3
+        }
+]
+> db.stores.find({location:{$near:{$geometry:{type:"Point",coordinates:[-10.25,30.568]},$maxDistance:1000}}}).pretty()
+> db.stores.find({location:{$near:{$geometry:{type:"Point",coordinates:[-10.25,30.568]},$maxDistance:8000}}}).pretty()
+> db.stores.find({location:{$near:{$geometry:{type:"Point",coordinates:[-10.25,30.568]}}}}).pretty()
+{
+        "_id" : ObjectId("5a74a3eea410270f178faf13"),
+        "name" : "Infinity",
+        "city" : "Kolkata",
+        "location" : {
+                "type" : "Point",
+                "coordinates" : [
+                        -15.25,
+                        45.525
+                ]
+        },
+        "type" : "Retail"
+}
+{
+        "_id" : ObjectId("5a74a3cda410270f178faf12"),
+        "name" : "BMW",
+        "city" : "Kolkata",
+        "location" : {
+                "type" : "Point",
+                "coordinates" : [
+                        -150.25,
+                        89.525
+	]
+}
+> db.stores.find({location:{$near:{$geometry:{type:"Point",coordinates:[-15.25,45.525]},$maxDistance:10000}}}).pretty()
+{
+        "_id" : ObjectId("5a74a3eea410270f178faf13"),
+        "name" : "Infinity",
+        "city" : "Kolkata",
+        "location" : {
+                "type" : "Point",
+                "coordinates" : [
+                        -15.25,
+                        45.525
+                ]
+        },
+        "type" : "Retail"
+}
+> db.stores.find({location:{$near:{$geometry:{type:"Point",coordinates:[-15.25,45.525]},$maxDistance:1000}}}).pretty()
+{
+        "_id" : ObjectId("5a74a3eea410270f178faf13"),
+        "name" : "Infinity",
+        "city" : "Kolkata",
+        "location" : {
+                "type" : "Point",
+                "coordinates" : [
+                        -15.25,
+                        45.525
+                ]
+        },
+        "type" : "Retail"
+}

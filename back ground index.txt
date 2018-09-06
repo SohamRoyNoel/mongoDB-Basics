@@ -1,0 +1,4 @@
+db.<db name>.createIndex({"index attribue"},{background:true});
+documentation::::::::
+https://docs.mongodb.com/manual/core/index-creation/#index-creation-background
+ 

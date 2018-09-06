@@ -1,0 +1,78 @@
+C:\Program Files\MongoDB\Server\3.4\bin\mongo.exe
+MongoDB shell version v3.4.10
+connecting to: mongodb://localhost:27017/admin
+MongoDB server version: 3.4.10
+> connecting to: test
+2017-11-01T10:10:49.404+0300 E QUERY    [thread1] SyntaxError: missing ; before statement @(shell):1:11
+> ;
+> connecting to: test
+2017-11-01T10:11:23.211+0300 E QUERY    [thread1] SyntaxError: missing ; before statement @(shell):1:11
+> connecting to: test;
+2017-11-01T10:11:30.491+0300 E QUERY    [thread1] SyntaxError: missing ; before statement @(shell):1:11
+> use mango
+switched to db mango
+> db
+mango
+mango
+2017-11-01T10:25:20.242+0300 E QUERY    [thread1] ReferenceError: mango is not defined :
+@(shell):1:1
+
+*****INSERTING VALUE
+> db.players.insert( 
+    {
+        "position":"right",
+        "id": "101",
+        "weight": 200    
+    }
+)
+WriteResult({ "nInserted" : 1 })
+
+***TO SEE THE COLLECTION NAMES
+> show collections
+players
+
+**********TO SEE THE CONTAINS OF A COLLECTION
+> db.players.find()
+{ "_id" : ObjectId("59f9773bb3eb0565c89cbe9d"), "position" : "right", "id" : "101", "weight" : 200 }
+
+****************************GENERATING ARRAY OF ELEMENTS TO INSER BULK DATA
+> db.players.insert([
+    {
+        "position":"right",
+        "id": "102",
+        "weight": 200
+    },
+    {
+        "position":"left",
+        "id": "103",
+        "weight": 150
+    },
+    {
+        "position":"forward",
+        "id": "104",
+        "weight": 200
+    },
+    {
+        "position":"left",
+        "id": "105",
+        "weight": 158
+    }
+])
+BulkWriteResult({
+	"writeErrors" : [ ],
+	"writeConcernErrors" : [ ],
+	"nInserted" : 4,
+	"nUpserted" : 0,
+	"nMatched" : 0,
+	"nModified" : 0,
+	"nRemoved" : 0,
+	"upserted" : [ ]
+})
+
+
+> db.players.find()
+{ "_id" : ObjectId("59f9773bb3eb0565c89cbe9d"), "position" : "right", "id" : "101", "weight" : 200 }
+{ "_id" : ObjectId("59f979dcb3eb0565c89cbe9e"), "position" : "right", "id" : "102", "weight" : 200 }
+{ "_id" : ObjectId("59f979dcb3eb0565c89cbe9f"), "position" : "left", "id" : "103", "weight" : 150 }
+{ "_id" : ObjectId("59f979dcb3eb0565c89cbea0"), "position" : "forward", "id" : "104", "weight" : 200 }
+{ "_id" : ObjectId("59f979dcb3eb0565c89cbea1"), "position" : "left", "id" : "105", "weight" : 158 }

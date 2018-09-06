@@ -1,0 +1,98 @@
+> db.test.find()
+use video
+switched to db video
+> db.videos.find()
+> db.videos.insert({"Name":"Soham Roy", "Year":1997, "Wife":"Ivy"})
+WriteResult({ "nInserted" : 1 })
+> db.videos.insert({"Name":"Soham Roy", "Year":1997, "Wife":"Sreeparna Khamrui"})
+WriteResult({ "nInserted" : 1 })
+> db.videos.insert({"Name":"Soham Roy", "Year":1997, "Wife":"Ankita Nath"})
+WriteResult({ "nInserted" : 1 })
+> db.videos.insrt({"Name":"Soham Roy", "Year":1997, "Wife":"Dishani"})
+2018-01-10T13:50:09.140+0300 E QUERY    [thread1] TypeError: db.videos.insrt is not a function :
+@(shell):1:1
+> db.videos.find()
+{ "_id" : ObjectId("5a55eebe326b856d50b57afe"), "Name" : "Soham Roy", "Year" : 1997, "Wife" : "Ivy" }
+{ "_id" : ObjectId("5a55ef96326b856d50b57aff"), "Name" : "Soham Roy", "Year" : 1997, "Wife" : "Sreeparna Khamrui" }
+{ "_id" : ObjectId("5a55efc3326b856d50b57b00"), "Name" : "Soham Roy", "Year" : 1997, "Wife" : "Ankita Nath" }
+> > db.videos.insert({"Name":"Soham Roy", "Year":1997, "Wife":"Dishani"})
+2018-01-10T13:51:06.122+0300 E QUERY    [thread1] SyntaxError: expected expression, got '>' @(shell):1:0
+>  db.videos.insert({"Name":"Soham Roy", "Year":1997, "Wife":"Dishani"})
+WriteResult({ "nInserted" : 1 })
+> db.videos.find()
+{ "_id" : ObjectId("5a55eebe326b856d50b57afe"), "Name" : "Soham Roy", "Year" : 1997, "Wife" : "Ivy" }
+{ "_id" : ObjectId("5a55ef96326b856d50b57aff"), "Name" : "Soham Roy", "Year" : 1997, "Wife" : "Sreeparna Khamrui" }
+{ "_id" : ObjectId("5a55efc3326b856d50b57b00"), "Name" : "Soham Roy", "Year" : 1997, "Wife" : "Ankita Nath" }
+{ "_id" : ObjectId("5a55f02b326b856d50b57b01"), "Name" : "Soham Roy", "Year" : 1997, "Wife" : "Dishani" }
+> db.videos.find().pretty()
+{
+	"_id" : ObjectId("5a55eebe326b856d50b57afe"),
+	"Name" : "Soham Roy",
+	"Year" : 1997,
+	"Wife" : "Ivy"
+}
+{
+	"_id" : ObjectId("5a55ef96326b856d50b57aff"),
+	"Name" : "Soham Roy",
+	"Year" : 1997,
+	"Wife" : "Sreeparna Khamrui"
+}
+{
+	"_id" : ObjectId("5a55efc3326b856d50b57b00"),
+	"Name" : "Soham Roy",
+	"Year" : 1997,
+	"Wife" : "Ankita Nath"
+}
+{
+	"_id" : ObjectId("5a55f02b326b856d50b57b01"),
+	"Name" : "Soham Roy",
+	"Year" : 1997,
+	"Wife" : "Dishani"
+}
+> db.videos.find({"Wife":"Dishani"}).pretty()
+{
+	"_id" : ObjectId("5a55f02b326b856d50b57b01"),
+	"Name" : "Soham Roy",
+	"Year" : 1997,
+	"Wife" : "Dishani"
+}
+> var c=db.videos.find()
+> c.hasnext()
+2018-01-10T13:57:22.804+0300 E QUERY    [thread1] TypeError: c.hasnext is not a function :
+@(shell):1:1
+> c.hasNext()
+true
+> c.next()
+{
+	"_id" : ObjectId("5a55eebe326b856d50b57afe"),
+	"Name" : "Soham Roy",
+	"Year" : 1997,
+	"Wife" : "Ivy"
+}
+> c.next()
+{
+	"_id" : ObjectId("5a55ef96326b856d50b57aff"),
+	"Name" : "Soham Roy",
+	"Year" : 1997,
+	"Wife" : "Sreeparna Khamrui"
+}
+> c.next()
+{
+	"_id" : ObjectId("5a55efc3326b856d50b57b00"),
+	"Name" : "Soham Roy",
+	"Year" : 1997,
+	"Wife" : "Ankita Nath"
+}
+> c.next()
+{
+	"_id" : ObjectId("5a55f02b326b856d50b57b01"),
+	"Name" : "Soham Roy",
+	"Year" : 1997,
+	"Wife" : "Dishani"
+}
+> c.next()
+2018-01-10T13:58:50.028+0300 E QUERY    [thread1] Error: error hasNext: false :
+DBQuery.prototype.next@src/mongo/shell/query.js:305:1
+@(shell):1:1
+> c.hasNext()
+false

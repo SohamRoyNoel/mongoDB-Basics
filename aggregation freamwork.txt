@@ -1,0 +1,537 @@
+SAMPLE DATABASE
+> use agg
+switched to db agg
+> use mng
+switched to db mng
+> db.products.find()
+{ "_id" : ObjectId("5a7c1451110e471c5ecdca6f"), "name" : "iPad 16GB Wifi", "manufacturer" : "Apple", "category" : "Tablets", "price" : 499 }
+{ "_id" : ObjectId("5a7c1451110e471c5ecdca70"), "name" : "iPad 32GB Wifi", "category" : "Tablets", "manufacturer" : "Apple", "price" : 599 }
+{ "_id" : ObjectId("5a7c1452110e471c5ecdca71"), "name" : "iPad 64GB Wifi", "category" : "Tablets", "manufacturer" : "Apple", "price" : 699 }
+{ "_id" : ObjectId("5a7c1452110e471c5ecdca72"), "name" : "Galaxy S3", "category" : "Cell Phones", "manufacturer" : "Samsung", "price" : 563.99 }
+{ "_id" : ObjectId("5a7c1452110e471c5ecdca73"), "name" : "Galaxy Tab 10", "category" : "Tablets", "manufacturer" : "Samsung", "price" : 450.99 }
+{ "_id" : ObjectId("5a7c1452110e471c5ecdca74"), "name" : "Vaio", "category" : "Laptops", "manufacturer" : "Sony", "price" : 499 }
+{ "_id" : ObjectId("5a7c1452110e471c5ecdca75"), "name" : "Macbook Air 13inch", "category" : "Laptops", "manufacturer" : "Apple", "price" : 499 }
+{ "_id" : ObjectId("5a7c1452110e471c5ecdca76"), "name" : "Nexus 7", "category" : "Tablets", "manufacturer" : "Google", "price" : 199 }
+{ "_id" : ObjectId("5a7c1452110e471c5ecdca77"), "name" : "Kindle Paper White", "category" : "Tablets", "manufacturer" : "Amazon", "price" : 129 }
+{ "_id" : ObjectId("5a7c1452110e471c5ecdca78"), "name" : "Kindle Fire", "category" : "Tablets", "manufacturer" : "Amazon", "price" : 199 }
+>
+>
+
+> db.products.findOne()
+{
+        "_id" : ObjectId("5a7c1451110e471c5ecdca6f"),
+        "name" : "iPad 16GB Wifi",
+        "manufacturer" : "Apple",
+        "category" : "Tablets",
+        "price" : 499
+}
+*************************************************************************************************************************
+AGGREGATION BY ONE ATTRIBUTE
+*************************************************************************************************************************
+> db.products.aggregate([{$group:{_id:"$manufacturer", nos:{$sum:1}}}])
+
+{ "_id" : "Amazon", "nos" : 2 }
+{ "_id" : "Google", "nos" : 1 }
+{ "_id" : "Sony", "nos" : 1 }
+{ "_id" : "Samsung", "nos" : 2 }
+{ "_id" : "Apple", "nos" : 4 }
+*************************************************************************************************************************
+AGGREGATION BY TWO ATTRIBUTE
+*************************************************************************************************************************
+> db.products.aggregate([{$group:{_id:{"MANU":"$manufacturer", "Cat":"$category"}, nos:{$sum:1}}}])
+
+{ "_id" : { "MANU" : "Google", "Cat" : "Tablets" }, "nos" : 1 }
+{ "_id" : { "MANU" : "Amazon", "Cat" : "Tablets" }, "nos" : 2 }
+{ "_id" : { "MANU" : "Apple", "Cat" : "Laptops" }, "nos" : 1 }
+{ "_id" : { "MANU" : "Sony", "Cat" : "Laptops" }, "nos" : 1 }
+{ "_id" : { "MANU" : "Samsung", "Cat" : "Cell Phones" }, "nos" : 1 }
+{ "_id" : { "MANU" : "Apple", "Cat" : "Tablets" }, "nos" : 3 }
+{ "_id" : { "MANU" : "Samsung", "Cat" : "Tablets" }, "nos" : 1 }
+*************************************************************************************************************************
+$sum
+*************************************************************************************************************************
+> db.products.aggregate([{$group:{_id:{"maker":"$manufacturer"}, price:{$sum:"$price"}}}])
+
+{ "_id" : { "maker" : "Amazon" }, "price" : 328 }
+{ "_id" : { "maker" : "Google" }, "price" : 199 }
+{ "_id" : { "maker" : "Sony" }, "price" : 499 }
+{ "_id" : { "maker" : "Samsung" }, "price" : 1014.98 }
+{ "_id" : { "maker" : "Apple" }, "price" : 2296 }
+===================================================================================
+> db.products.aggregate([{$group:{_id:{"maker":"$manufacturer"},number:{$sum:1}, price:{$sum:"$price"}}}])
+
+{ "_id" : { "maker" : "Amazon" }, "number" : 2, "price" : 328 }
+{ "_id" : { "maker" : "Google" }, "number" : 1, "price" : 199 }
+{ "_id" : { "maker" : "Sony" }, "number" : 1, "price" : 499 }
+{ "_id" : { "maker" : "Samsung" }, "number" : 2, "price" : 1014.98 }
+{ "_id" : { "maker" : "Apple" }, "number" : 4, "price" : 2296 }
+*************************************************************************************************************************
+$avg
+*************************************************************************************************************************
+> db.products.aggregate([{$group:{_id:{"maker":"$manufacturer"},number:{$sum:1}, price:{$avg:"$price"}}}])
+{ "_id" : { "maker" : "Amazon" }, "number" : 2, "price" : 164 }
+{ "_id" : { "maker" : "Google" }, "number" : 1, "price" : 199 }
+{ "_id" : { "maker" : "Sony" }, "number" : 1, "price" : 499 }
+{ "_id" : { "maker" : "Samsung" }, "number" : 2, "price" : 507.49 }
+{ "_id" : { "maker" : "Apple" }, "number" : 4, "price" : 574 }
+*************************************************************************************************************************
+$addToSet
+*************************************************************************************************************************
+> db.products.aggregate([{$group:{_id:{"maker":"$manufacturer"},number:{$sum:1}, price:{$addToSet:"$price"}}}])
+
+{ "_id" : { "maker" : "Amazon" }, "number" : 2, "price" : [ 199, 129 ] }
+{ "_id" : { "maker" : "Google" }, "number" : 1, "price" : [ 199 ] }
+{ "_id" : { "maker" : "Sony" }, "number" : 1, "price" : [ 499 ] }
+{ "_id" : { "maker" : "Samsung" }, "number" : 2, "price" : [ 450.99, 563.99 ] }
+{ "_id" : { "maker" : "Apple" }, "number" : 4, "price" : [ 699, 599, 499 ] }
+========================================================================================
+> db.products.aggregate([{$group:{_id:{"maker":"$manufacturer"},number:{$sum:1}, price:{$addToSet:"$category"}}}])
+
+{ "_id" : { "maker" : "Amazon" }, "number" : 2, "price" : [ "Tablets" ] }
+{ "_id" : { "maker" : "Google" }, "number" : 1, "price" : [ "Tablets" ] }
+{ "_id" : { "maker" : "Sony" }, "number" : 1, "price" : [ "Laptops" ] }
+{ "_id" : { "maker" : "Samsung" }, "number" : 2, "price" : [ "Tablets", "Cell Phones" ] }
+{ "_id" : { "maker" : "Apple" }, "number" : 4, "price" : [ "Laptops", "Tablets" ] }
+*************************************************************************************************************************
+$push
+*************************************************************************************************************************
+> db.products.aggregate([{$group:{_id:{"Maker":"$manufacturer"}, Product:{$push:"$category"}}}])
+
+{ "_id" : { "Maker" : "Amazon" }, "Product" : [ "Tablets", "Tablets" ] }
+{ "_id" : { "Maker" : "Google" }, "Product" : [ "Tablets" ] }
+{ "_id" : { "Maker" : "Sony" }, "Product" : [ "Laptops" ] }
+{ "_id" : { "Maker" : "Samsung" }, "Product" : [ "Cell Phones", "Tablets" ] }
+{ "_id" : { "Maker" : "Apple" }, "Product" : [ "Tablets", "Tablets", "Tablets", "Laptops" ] }
+=====================================================================
+> db.products.aggregate([{$group:{_id:{"Maker":"$manufacturer"},nos:{$sum:1},Product:{$push:"$category"}}}])
+
+{ "_id" : { "Maker" : "Amazon" }, "nos" : 2, "Product" : [ "Tablets", "Tablets" ] }
+{ "_id" : { "Maker" : "Google" }, "nos" : 1, "Product" : [ "Tablets" ] }
+{ "_id" : { "Maker" : "Sony" }, "nos" : 1, "Product" : [ "Laptops" ] }
+{ "_id" : { "Maker" : "Samsung" }, "nos" : 2, "Product" : [ "Cell Phones", "Tablets" ] }
+{ "_id" : { "Maker" : "Apple" }, "nos" : 4, "Product" : [ "Tablets", "Tablets", "Tablets", "Laptops" ] }
+*************************************************************************************************************************
+$max & $min
+*************************************************************************************************************************
+> db.products.aggregate([{$group:{_id:{"Maker":"$manufacturer"},Price:{$addToSet:"$price"}, Max:{$max:"$price"}}}])
+{ "_id" : { "Maker" : "Amazon" }, "Price" : [ 199, 129 ], "Max" : 199 }
+{ "_id" : { "Maker" : "Google" }, "Price" : [ 199 ], "Max" : 199 }
+{ "_id" : { "Maker" : "Sony" }, "Price" : [ 499 ], "Max" : 499 }
+{ "_id" : { "Maker" : "Samsung" }, "Price" : [ 450.99, 563.99 ], "Max" : 563.99 }
+{ "_id" : { "Maker" : "Apple" }, "Price" : [ 699, 599, 499 ], "Max" : 699 }
+===========================================================================
+> db.products.aggregate([{$group:{_id:{"Maker":"$manufacturer"},Price:{$addToSet:"$price"}, Min:{$min:"$price"}}}])
+{ "_id" : { "Maker" : "Amazon" }, "Price" : [ 199, 129 ], "Min" : 129 }
+{ "_id" : { "Maker" : "Google" }, "Price" : [ 199 ], "Min" : 199 }
+{ "_id" : { "Maker" : "Sony" }, "Price" : [ 499 ], "Min" : 499 }
+{ "_id" : { "Maker" : "Samsung" }, "Price" : [ 450.99, 563.99 ], "Min" : 450.99 }
+{ "_id" : { "Maker" : "Apple" }, "Price" : [ 699, 599, 499 ], "Min" : 499 }
+*************************************************************************************************************************
+DOUBLE GROUPING
+*************************************************************************************************************************
+1. GROUPING ALL VALUES BY EXAM TYPE AND STUDENT ID-> FINDING AGGREGATE
+2. GROUPING the result of 1st query BY THE ----- SAME ATTRIBUTE
+---------------------------------------------------------------------------------------------------------------
+> db.zips.aggregate([{$group:{_id:{"type":"$type", "Stu_id":"$student_id"},average:{"$avg":"$score"}}}, {$group:{_id:"$_id.type",average:{"$avg":"$average"}}}])
+{ "_id" : "homework", "average" : 68.25205841718045 }
+{ "_id" : "quiz", "average" : 52.771789727493314 }
+{ "_id" : "exam", "average" : 52.40519704346796 }
+=================================================================
+> db.zips.aggregate([{$group:{_id:{"type":"$type", "Stu_id":"$student_id"},average:{"$avg":"$score"}}}])
+{ "_id" : { "type" : "exam", "Stu_id" : 199 }, "average" : 67.33828604577803 }
+{ "_id" : { "type" : "quiz", "Stu_id" : 198 }, "average" : 83.44326100636312 }
+{ "_id" : { "type" : "exam", "Stu_id" : 198 }, "average" : 49.65504121659061 }
+{ "_id" : { "type" : "homework", "Stu_id" : 197 }, "average" : 88.3871242475841 }
+{ "_id" : { "type" : "quiz", "Stu_id" : 197 }, "average" : 35.11140938820992 }
+{ "_id" : { "type" : "exam", "Stu_id" : 197 }, "average" : 95.96860886271084 }
+{ "_id" : { "type" : "homework", "Stu_id" : 196 }, "average" : 96.21255150192908 }
+{ "_id" : { "type" : "quiz", "Stu_id" : 196 }, "average" : 94.1229977702069 }
+{ "_id" : { "type" : "homework", "Stu_id" : 195 }, "average" : 62.18815544574834 }
+{ "_id" : { "type" : "quiz", "Stu_id" : 195 }, "average" : 19.34052845067049 }
+{ "_id" : { "type" : "homework", "Stu_id" : 188 }, "average" : 74.59104379442469 }
+{ "_id" : { "type" : "quiz", "Stu_id" : 188 }, "average" : 38.1341264028024 }
+{ "_id" : { "type" : "homework", "Stu_id" : 194 }, "average" : 62.83783297617745 }
+{ "_id" : { "type" : "homework", "Stu_id" : 193 }, "average" : 60.66990168068962 }
+{ "_id" : { "type" : "exam", "Stu_id" : 194 }, "average" : 67.09136149008972 }
+{ "_id" : { "type" : "quiz", "Stu_id" : 193 }, "average" : 98.72611943637821 }
+{ "_id" : { "type" : "homework", "Stu_id" : 192 }, "average" : 83.13767030321337 }
+{ "_id" : { "type" : "exam", "Stu_id" : 192 }, "average" : 56.23200569677124 }
+{ "_id" : { "type" : "quiz", "Stu_id" : 191 }, "average" : 38.63454173123748 }
+{ "_id" : { "type" : "homework", "Stu_id" : 191 }, "average" : 58.15023810279373 }
+Type "it" for more
+*************************************************************************************************************************
+$projection
+*************************************************************************************************************************
+db.products.aggregate([{$project:{"_id":0, "maker":{$toLower:"$manufacturer"},"details":{"category":"$category", "price":{"$multiply":["$price",10]}},"item":"$name"}}])
+{ "maker" : "apple", "details" : { "category" : "Tablets", "price" : 4990 }, "item" : "iPad 16GB Wifi" }
+{ "maker" : "apple", "details" : { "category" : "Tablets", "price" : 5990 }, "item" : "iPad 32GB Wifi" }
+{ "maker" : "apple", "details" : { "category" : "Tablets", "price" : 6990 }, "item" : "iPad 64GB Wifi" }
+{ "maker" : "samsung", "details" : { "category" : "Cell Phones", "price" : 5639.9 }, "item" : "Galaxy S3" }
+{ "maker" : "samsung", "details" : { "category" : "Tablets", "price" : 4509.9 }, "item" : "Galaxy Tab 10" }
+{ "maker" : "sony", "details" : { "category" : "Laptops", "price" : 4990 }, "item" : "Vaio" }
+{ "maker" : "apple", "details" : { "category" : "Laptops", "price" : 4990 }, "item" : "Macbook Air 13inch" }
+{ "maker" : "google", "details" : { "category" : "Tablets", "price" : 1990 }, "item" : "Nexus 7" }
+{ "maker" : "amazon", "details" : { "category" : "Tablets", "price" : 1290 }, "item" : "Kindle Paper White" }
+{ "maker" : "amazon", "details" : { "category" : "Tablets", "price" : 1990 }, "item" : "Kindle Fire" }
+*************************************************************************************************************************
+$match
+*************************************************************************************************************************
+> db.grades.aggregate([{$match:{"state":"MA"}}])
+{ "_id" : "01005", "city" : "BARRE", "loc" : [ -72.108354, 42.409698 ], "pop" : 4546, "state" : "MA" }
+{ "_id" : "01001", "city" : "AGAWAM", "loc" : [ -72.622739, 42.070206 ], "pop" : 15338, "state" : "MA" }
+{ "_id" : "01002", "city" : "CUSHMAN", "loc" : [ -72.51565, 42.377017 ], "pop" : 36963, "state" : "MA" }
+{ "_id" : "01010", "city" : "BRIMFIELD", "loc" : [ -72.188455, 42.116543 ], "pop" : 3706, "state" : "MA" }
+{ "_id" : "01008", "city" : "BLANDFORD", "loc" : [ -72.936114, 42.182949 ], "pop" : 1240, "state" : "MA" }
+{ "_id" : "01011", "city" : "CHESTER", "loc" : [ -72.988761, 42.279421 ], "pop" : 1688, "state" : "MA" }
+{ "_id" : "01013", "city" : "CHICOPEE", "loc" : [ -72.607962, 42.162046 ], "pop" : 23396, "state" : "MA" }
+{ "_id" : "01012", "city" : "CHESTERFIELD", "loc" : [ -72.833309, 42.38167 ], "pop" : 177, "state" : "MA" }
+{ "_id" : "01007", "city" : "BELCHERTOWN", "loc" : [ -72.410953, 42.275103 ], "pop" : 10579, "state" : "MA" }
+{ "_id" : "01027", "city" : "MOUNT TOM", "loc" : [ -72.679921, 42.264319 ], "pop" : 16864, "state" : "MA" }
+{ "_id" : "01026", "city" : "CUMMINGTON", "loc" : [ -72.905767, 42.435296 ], "pop" : 1484, "state" : "MA" }
+{ "_id" : "01028", "city" : "EAST LONGMEADOW", "loc" : [ -72.505565, 42.067203 ], "pop" : 13367, "state" : "MA" }
+{ "_id" : "01030", "city" : "FEEDING HILLS", "loc" : [ -72.675077, 42.07182 ], "pop" : 11985, "state" : "MA" }
+{ "_id" : "01031", "city" : "GILBERTVILLE", "loc" : [ -72.198585, 42.332194 ], "pop" : 2385, "state" : "MA" }
+{ "_id" : "01032", "city" : "GOSHEN", "loc" : [ -72.844092, 42.466234 ], "pop" : 122, "state" : "MA" }
+{ "_id" : "01020", "city" : "CHICOPEE", "loc" : [ -72.576142, 42.176443 ], "pop" : 31495, "state" : "MA" }
+{ "_id" : "01033", "city" : "GRANBY", "loc" : [ -72.520001, 42.255704 ], "pop" : 5526, "state" : "MA" }
+{ "_id" : "01022", "city" : "WESTOVER AFB", "loc" : [ -72.558657, 42.196672 ], "pop" : 1764, "state" : "MA" }
+{ "_id" : "01034", "city" : "TOLLAND", "loc" : [ -72.908793, 42.070234 ], "pop" : 1652, "state" : "MA" }
+{ "_id" : "01035", "city" : "HADLEY", "loc" : [ -72.571499, 42.36062 ], "pop" : 4231, "state" : "MA" }
+Type "it" for more
+---------------------------------------
+> db.grades.aggregate([{$match:{"state":"MA"}}, {$group:{_id:"$city",Population:{$sum:"$pop"}}}])
+{ "_id" : "RAYNHAM", "Population" : 9804 }
+{ "_id" : "ROCHESTER", "Population" : 3270 }
+{ "_id" : "PLAINVILLE", "Population" : 6874 }
+{ "_id" : "NORTH ATTLEBORO", "Population" : 25026 }
+{ "_id" : "NORTH DARTMOUTH", "Population" : 16383 }
+{ "_id" : "ACUSHNET", "Population" : 9601 }
+{ "_id" : "MATTAPOISETT", "Population" : 5850 }
+{ "_id" : "FALL RIVER", "Population" : 92426 }
+{ "_id" : "EAST FREETOWN", "Population" : 4883 }
+{ "_id" : "DIGHTON", "Population" : 1828 }
+{ "_id" : "CUTTYHUNK", "Population" : 98 }
+{ "_id" : "PADANARAM VILLAG", "Population" : 10980 }
+{ "_id" : "PROVINCETOWN", "Population" : 3561 }
+{ "_id" : "OSTERVILLE", "Population" : 2330 }
+{ "_id" : "ATTLEBORO", "Population" : 38528 }
+{ "_id" : "SEEKONK", "Population" : 13375 }
+{ "_id" : "ASSONET", "Population" : 3614 }
+{ "_id" : "BASS RIVER", "Population" : 8514 }
+{ "_id" : "TRURO", "Population" : 739 }
+{ "_id" : "FORESTDALE", "Population" : 2712 }
+Type "it" for more
+------------------------------------------
+> db.grades.aggregate([{$match:{"state":"MA"}}, {$group:{_id:"$city",Population:{$sum:"$pop"}}},{$project:{_id:0, city:"$_id", Population:1}}])
+{ "Population" : 9804, "city" : "RAYNHAM" }
+{ "Population" : 3270, "city" : "ROCHESTER" }
+{ "Population" : 6874, "city" : "PLAINVILLE" }
+{ "Population" : 25026, "city" : "NORTH ATTLEBORO" }
+{ "Population" : 16383, "city" : "NORTH DARTMOUTH" }
+{ "Population" : 9601, "city" : "ACUSHNET" }
+{ "Population" : 5850, "city" : "MATTAPOISETT" }
+{ "Population" : 92426, "city" : "FALL RIVER" }
+{ "Population" : 4883, "city" : "EAST FREETOWN" }
+{ "Population" : 1828, "city" : "DIGHTON" }
+{ "Population" : 98, "city" : "CUTTYHUNK" }
+{ "Population" : 10980, "city" : "PADANARAM VILLAG" }
+{ "Population" : 3561, "city" : "PROVINCETOWN" }
+{ "Population" : 2330, "city" : "OSTERVILLE" }
+{ "Population" : 38528, "city" : "ATTLEBORO" }
+{ "Population" : 13375, "city" : "SEEKONK" }
+{ "Population" : 3614, "city" : "ASSONET" }
+{ "Population" : 8514, "city" : "BASS RIVER" }
+{ "Population" : 739, "city" : "TRURO" }
+{ "Population" : 2712, "city" : "FORESTDALE" }
+Type "it" for more0 
+*************************************************************************************************************************
+$sort in aggre gation, can short data that is only less than 100mb in pipeline
+*************************************************************************************************************************
+> db.grades.aggregate([{$match:{"state":"MA"}}, {$group:{_id:"$city",Population:{$sum:"$pop"}}},{$project:{_id:0, city:"$_id", Population:1}},{$sort:{Population:-1}}])
+{ "Population" : 169856, "city" : "WORCESTER" }
+{ "Population" : 148062, "city" : "SPRINGFIELD" }
+{ "Population" : 126821, "city" : "DORCHESTER" }
+{ "Population" : 103439, "city" : "LOWELL" }
+{ "Population" : 99747, "city" : "NEW BEDFORD" }
+{ "Population" : 92788, "city" : "BROCKTON" }
+{ "Population" : 92426, "city" : "FALL RIVER" }
+{ "Population" : 91302, "city" : "BOSTON" }
+{ "Population" : 85501, "city" : "QUINCY" }
+{ "Population" : 76393, "city" : "SOMERVILLE" }
+{ "Population" : 70568, "city" : "LAWRENCE" }
+{ "Population" : 68326, "city" : "CAMBRIDGE" }
+{ "Population" : 65046, "city" : "FRAMINGHAM" }
+{ "Population" : 61333, "city" : "ROXBURY" }
+{ "Population" : 57871, "city" : "NORTH WALTHAM" }
+{ "Population" : 57338, "city" : "MEDFORD" }
+{ "Population" : 56614, "city" : "BROOKLINE" }
+{ "Population" : 54891, "city" : "CHICOPEE" }
+{ "Population" : 54114, "city" : "MALDEN" }
+{ "Population" : 54063, "city" : "WEYMOUTH" }
+*************************************************************************************************************************
+$skip & $limit : 
+*************************************************************************************************************************
+> db.grades.aggregate([{$match:{"state":"MA"}}, {$group:{_id:"$city",Population:{$sum:"$pop"}}},{$project:{_id:0, city:"$_id", Population:1}},{$sort:{Population:-1}},{$skip:2},{$limit:5}])
+{ "Population" : 126821, "city" : "DORCHESTER" }
+{ "Population" : 103439, "city" : "LOWELL" }
+{ "Population" : 99747, "city" : "NEW BEDFORD" }
+{ "Population" : 92788, "city" : "BROCKTON" }
+{ "Population" : 92426, "city" : "FALL RIVER" }
+**********************************************************************************************************************************
+$first & &last
+**********************************************************************************************************************************
+> db.grades.aggregate([{$group:{_id:{state:"$state",city:"$city"},population:{$sum:"$pop"}}}])
+{ "_id" : { "state" : "AK", "city" : "HYDER" }, "population" : 116 }
+{ "_id" : { "state" : "AK", "city" : "THORNE BAY" }, "population" : 744 }
+{ "_id" : { "state" : "AK", "city" : "SKAGWAY" }, "population" : 692 }
+{ "_id" : { "state" : "AK", "city" : "SITKA" }, "population" : 8638 }
+{ "_id" : { "state" : "AK", "city" : "HOONAH" }, "population" : 1670 }
+{ "_id" : { "state" : "AK", "city" : "VENETIE" }, "population" : 184 }
+{ "_id" : { "state" : "AK", "city" : "NUIQSUT" }, "population" : 354 }
+{ "_id" : { "state" : "AK", "city" : "CHALKYITSIK" }, "population" : 99 }
+{ "_id" : { "state" : "AK", "city" : "WAINWRIGHT" }, "population" : 492 }
+{ "_id" : { "state" : "AK", "city" : "WALES" }, "population" : 341 }
+{ "_id" : { "state" : "AK", "city" : "TELLER" }, "population" : 260 }
+{ "_id" : { "state" : "AK", "city" : "TANANA" }, "population" : 345 }
+{ "_id" : { "state" : "AK", "city" : "SELAWIK" }, "population" : 0 }
+{ "_id" : { "state" : "AK", "city" : "POINT HOPE" }, "population" : 640 }
+{ "_id" : { "state" : "AK", "city" : "MANLEY HOT SPRIN" }, "population" : 122 }
+{ "_id" : { "state" : "AK", "city" : "GOLOVIN" }, "population" : 3706 }
+{ "_id" : { "state" : "AK", "city" : "NENANA" }, "population" : 393 }
+{ "_id" : { "state" : "AK", "city" : "POINT LAY" }, "population" : 139 }
+{ "_id" : { "state" : "AK", "city" : "MINTO" }, "population" : 228 }
+{ "_id" : { "state" : "AK", "city" : "LAKE MINCHUMINA" }, "population" : 32 }
+Type "it" for more
+-----------------------------------------------------------------------------------------------------------
+> db.grades.aggregate([{$group:{_id:{state:"$state",city:"$city"},population:{$sum:"$pop"}}},{$sort:{"_id.state":1,"population":-1}}])
+{ "_id" : { "state" : "AK", "city" : "ANCHORAGE" }, "population" : 183987 }
+{ "_id" : { "state" : "AK", "city" : "FAIRBANKS" }, "population" : 31379 }
+{ "_id" : { "state" : "AK", "city" : "JUNEAU" }, "population" : 24947 }
+{ "_id" : { "state" : "AK", "city" : "WASILLA" }, "population" : 24619 }
+{ "_id" : { "state" : "AK", "city" : "COLDFOOT" }, "population" : 19316 }
+{ "_id" : { "state" : "AK", "city" : "EAGLE RIVER" }, "population" : 18429 }
+{ "_id" : { "state" : "AK", "city" : "NORTH POLE" }, "population" : 14672 }
+{ "_id" : { "state" : "AK", "city" : "KETCHIKAN" }, "population" : 14308 }
+{ "_id" : { "state" : "AK", "city" : "AKHIOK" }, "population" : 13309 }
+{ "_id" : { "state" : "AK", "city" : "BUTTE" }, "population" : 12358 }
+{ "_id" : { "state" : "AK", "city" : "KENAI" }, "population" : 10508 }
+{ "_id" : { "state" : "AK", "city" : "SOLDOTNA" }, "population" : 9825 }
+{ "_id" : { "state" : "AK", "city" : "SITKA" }, "population" : 8638 }
+{ "_id" : { "state" : "AK", "city" : "PORT GRAHAM" }, "population" : 8186 }
+{ "_id" : { "state" : "AK", "city" : "FORT RICHARDSON" }, "population" : 7979 }
+{ "_id" : { "state" : "AK", "city" : "ELMENDORF AFB" }, "population" : 7907 }
+{ "_id" : { "state" : "AK", "city" : "ATMAUTLUAK" }, "population" : 7188 }
+{ "_id" : { "state" : "AK", "city" : "VALDEZ" }, "population" : 7049 }
+{ "_id" : { "state" : "AK", "city" : "CHUGIAK" }, "population" : 6910 }
+{ "_id" : { "state" : "AK", "city" : "FORT WAINWRIGHT" }, "population" : 6238 }
+Type "it" for more
+-----------------------------------------------------------------------------------------------------------
+> db.grades.aggregate([{$group:{_id:{state:"$state",city:"$city"},population:{$sum:"$pop"}}},{$sort:{"_id.state":1,"population":-1}},{$group:{_id:"$_id.state",city:{$first:"$_id.city"}}}])
+{ "_id" : "WY", "city" : "CHEYENNE" }
+{ "_id" : "WI", "city" : "MILWAUKEE" }
+{ "_id" : "VA", "city" : "VIRGINIA BEACH" }
+{ "_id" : "UT", "city" : "SALT LAKE CITY" }
+{ "_id" : "TX", "city" : "HOUSTON" }
+{ "_id" : "SD", "city" : "SIOUX FALLS" }
+{ "_id" : "SC", "city" : "COLUMBIA" }
+{ "_id" : "VT", "city" : "BURLINGTON" }
+{ "_id" : "PA", "city" : "PHILADELPHIA" }
+{ "_id" : "OH", "city" : "CLEVELAND" }
+{ "_id" : "NY", "city" : "BROOKLYN" }
+{ "_id" : "WV", "city" : "HUNTINGTON" }
+{ "_id" : "TN", "city" : "MEMPHIS" }
+{ "_id" : "NJ", "city" : "NEWARK" }
+{ "_id" : "NH", "city" : "MANCHESTER" }
+{ "_id" : "ND", "city" : "GRAND FORKS" }
+{ "_id" : "MT", "city" : "BILLINGS" }
+{ "_id" : "NC", "city" : "CHARLOTTE" }
+{ "_id" : "MO", "city" : "SAINT LOUIS" }
+{ "_id" : "MD", "city" : "BALTIMORE" }
+Type "it" for more
+-----------------------------------------------------------------------------------------------------------
+> db.grades.aggregate([{$group:{_id:{state:"$state",city:"$city"},population:{$sum:"$pop"}}},{$sort:{"_id.state":1,"population":-1}},{$group:{_id:"$_id.state",city:{$first:"$_id.city"}, population:{$first:"$population"}}}])
+{ "_id" : "WY", "city" : "CHEYENNE", "population" : 70185 }
+{ "_id" : "WI", "city" : "MILWAUKEE", "population" : 597324 }
+{ "_id" : "VA", "city" : "VIRGINIA BEACH", "population" : 385080 }
+{ "_id" : "UT", "city" : "SALT LAKE CITY", "population" : 186346 }
+{ "_id" : "TX", "city" : "HOUSTON", "population" : 2095918 }
+{ "_id" : "SD", "city" : "SIOUX FALLS", "population" : 102046 }
+{ "_id" : "SC", "city" : "COLUMBIA", "population" : 269521 }
+{ "_id" : "VT", "city" : "BURLINGTON", "population" : 39127 }
+{ "_id" : "PA", "city" : "PHILADELPHIA", "population" : 1610956 }
+{ "_id" : "OH", "city" : "CLEVELAND", "population" : 536759 }
+{ "_id" : "NY", "city" : "BROOKLYN", "population" : 2300504 }
+{ "_id" : "WV", "city" : "HUNTINGTON", "population" : 75343 }
+{ "_id" : "TN", "city" : "MEMPHIS", "population" : 632837 }
+{ "_id" : "NJ", "city" : "NEWARK", "population" : 275572 }
+{ "_id" : "NH", "city" : "MANCHESTER", "population" : 106452 }
+{ "_id" : "ND", "city" : "GRAND FORKS", "population" : 59527 }
+{ "_id" : "MT", "city" : "BILLINGS", "population" : 78805 }
+{ "_id" : "NC", "city" : "CHARLOTTE", "population" : 465833 }
+{ "_id" : "MO", "city" : "SAINT LOUIS", "population" : 397802 }
+{ "_id" : "MD", "city" : "BALTIMORE", "population" : 733081 }
+Type "it" for more
+-----------------------------------------------------------------------------------------------------------
+> db.grades.aggregate([{$group:{_id:{state:"$state",city:"$city"},population:{$sum:"$pop"}}},{$sort:{"_id.state":1,"population":-1}},{$group:{_id:"$_id.state",city:{$first:"$_id.city"}, population:{$first:"$population"}}},{$project:{state:"_id.state",city:1,population:1}}])
+{ "_id" : "WY", "city" : "CHEYENNE", "population" : 70185, "state" : "_id.state" }
+{ "_id" : "WI", "city" : "MILWAUKEE", "population" : 597324, "state" : "_id.state" }
+{ "_id" : "VA", "city" : "VIRGINIA BEACH", "population" : 385080, "state" : "_id.state" }
+{ "_id" : "UT", "city" : "SALT LAKE CITY", "population" : 186346, "state" : "_id.state" }
+{ "_id" : "TX", "city" : "HOUSTON", "population" : 2095918, "state" : "_id.state" }
+{ "_id" : "SD", "city" : "SIOUX FALLS", "population" : 102046, "state" : "_id.state" }
+{ "_id" : "SC", "city" : "COLUMBIA", "population" : 269521, "state" : "_id.state" }
+{ "_id" : "VT", "city" : "BURLINGTON", "population" : 39127, "state" : "_id.state" }
+{ "_id" : "PA", "city" : "PHILADELPHIA", "population" : 1610956, "state" : "_id.state" }
+{ "_id" : "OH", "city" : "CLEVELAND", "population" : 536759, "state" : "_id.state" }
+{ "_id" : "NY", "city" : "BROOKLYN", "population" : 2300504, "state" : "_id.state" }
+{ "_id" : "WV", "city" : "HUNTINGTON", "population" : 75343, "state" : "_id.state" }
+{ "_id" : "TN", "city" : "MEMPHIS", "population" : 632837, "state" : "_id.state" }
+{ "_id" : "NJ", "city" : "NEWARK", "population" : 275572, "state" : "_id.state" }
+{ "_id" : "NH", "city" : "MANCHESTER", "population" : 106452, "state" : "_id.state" }
+{ "_id" : "ND", "city" : "GRAND FORKS", "population" : 59527, "state" : "_id.state" }
+{ "_id" : "MT", "city" : "BILLINGS", "population" : 78805, "state" : "_id.state" }
+{ "_id" : "NC", "city" : "CHARLOTTE", "population" : 465833, "state" : "_id.state" }
+{ "_id" : "MO", "city" : "SAINT LOUIS", "population" : 397802, "state" : "_id.state" }
+{ "_id" : "MD", "city" : "BALTIMORE", "population" : 733081, "state" : "_id.state" }
+Type "it" for more
+-----------------------------------------------------------------------------------------------------------
+> db.grades.aggregate([{$group:{_id:{state:"$state",city:"$city"},population:{$sum:"$pop"}}},{$sort:{"_id.state":1,"population":-1}},{$group:{_id:"$_id.state",city:{$first:"$_id.city"}, population:{$first:"$population"}}},{$project:{_id:0,state:"state",city:1,population:1}}])
+{ "city" : "CHEYENNE", "population" : 70185, "state" : "state" }
+{ "city" : "MILWAUKEE", "population" : 597324, "state" : "state" }
+{ "city" : "VIRGINIA BEACH", "population" : 385080, "state" : "state" }
+{ "city" : "SALT LAKE CITY", "population" : 186346, "state" : "state" }
+{ "city" : "HOUSTON", "population" : 2095918, "state" : "state" }
+{ "city" : "SIOUX FALLS", "population" : 102046, "state" : "state" }
+{ "city" : "COLUMBIA", "population" : 269521, "state" : "state" }
+{ "city" : "BURLINGTON", "population" : 39127, "state" : "state" }
+{ "city" : "PHILADELPHIA", "population" : 1610956, "state" : "state" }
+{ "city" : "CLEVELAND", "population" : 536759, "state" : "state" }
+{ "city" : "BROOKLYN", "population" : 2300504, "state" : "state" }
+{ "city" : "HUNTINGTON", "population" : 75343, "state" : "state" }
+{ "city" : "MEMPHIS", "population" : 632837, "state" : "state" }
+{ "city" : "NEWARK", "population" : 275572, "state" : "state" }
+{ "city" : "MANCHESTER", "population" : 106452, "state" : "state" }
+{ "city" : "GRAND FORKS", "population" : 59527, "state" : "state" }
+{ "city" : "BILLINGS", "population" : 78805, "state" : "state" }
+{ "city" : "CHARLOTTE", "population" : 465833, "state" : "state" }
+{ "city" : "SAINT LOUIS", "population" : 397802, "state" : "state" }
+{ "city" : "BALTIMORE", "population" : 733081, "state" : "state" }
+Type "it" for more
+****************************************************************************************************
+double unwind and unwind
+****************************************************************************************************
+script:
+-------------------------------------------
+db.inventory.insert({'name':"Polo Shirt", 'sizes':["Small", "Medium", "Large"], 'colors':['navy', 'white', 'orange', 'red']})
+db.inventory.insert({'name':"T-Shirt", 'sizes':["Small", "Medium", "Large", "X-Large"], 'colors':['navy', "black",  'orange', 'red']})
+db.inventory.insert({'name':"Chino Pants", 'sizes':["32x32", "31x30", "36x32"], 'colors':['navy', 'white', 'orange', 'violet']})
+-------------------------------------------
+ db.inventory.findOne()
+{
+	"_id" : ObjectId("5a7f4fe8f5e885ba24e53b3b"),
+	"name" : "Polo Shirt",
+	"sizes" : [
+		"Small",
+		"Medium",
+		"Large"
+	],
+	"colors" : [
+		"navy",
+		"white",
+		"orange",
+		"red"
+	]
+}
+> db.inventory.aggregate([{$unwind:"$sizes"}])
+{ "_id" : ObjectId("5a7f4fe8f5e885ba24e53b3b"), "name" : "Polo Shirt", "sizes" : "Small", "colors" : [ "navy", "white", "orange", "red" ] }
+{ "_id" : ObjectId("5a7f4fe8f5e885ba24e53b3b"), "name" : "Polo Shirt", "sizes" : "Medium", "colors" : [ "navy", "white", "orange", "red" ] }
+{ "_id" : ObjectId("5a7f4fe8f5e885ba24e53b3b"), "name" : "Polo Shirt", "sizes" : "Large", "colors" : [ "navy", "white", "orange", "red" ] }
+{ "_id" : ObjectId("5a7f4fe9f5e885ba24e53b3c"), "name" : "T-Shirt", "sizes" : "Small", "colors" : [ "navy", "black", "orange", "red" ] }
+{ "_id" : ObjectId("5a7f4fe9f5e885ba24e53b3c"), "name" : "T-Shirt", "sizes" : "Medium", "colors" : [ "navy", "black", "orange", "red" ] }
+{ "_id" : ObjectId("5a7f4fe9f5e885ba24e53b3c"), "name" : "T-Shirt", "sizes" : "Large", "colors" : [ "navy", "black", "orange", "red" ] }
+{ "_id" : ObjectId("5a7f4fe9f5e885ba24e53b3c"), "name" : "T-Shirt", "sizes" : "X-Large", "colors" : [ "navy", "black", "orange", "red" ] }
+{ "_id" : ObjectId("5a7f4fe9f5e885ba24e53b3d"), "name" : "Chino Pants", "sizes" : "32x32", "colors" : [ "navy", "white", "orange", "violet" ] }
+{ "_id" : ObjectId("5a7f4fe9f5e885ba24e53b3d"), "name" : "Chino Pants", "sizes" : "31x30", "colors" : [ "navy", "white", "orange", "violet" ] }
+{ "_id" : ObjectId("5a7f4fe9f5e885ba24e53b3d"), "name" : "Chino Pants", "sizes" : "36x32", "colors" : [ "navy", "white", "orange", "violet" ] }
+-------------------------------------------------------------------------------------------
+> db.inventory.aggregate([{$unwind:"$sizes"},{$unwind:"$colors"}])
+{ "_id" : ObjectId("5a7f4fe8f5e885ba24e53b3b"), "name" : "Polo Shirt", "sizes" : "Small", "colors" : "navy" }
+{ "_id" : ObjectId("5a7f4fe8f5e885ba24e53b3b"), "name" : "Polo Shirt", "sizes" : "Small", "colors" : "white" }
+{ "_id" : ObjectId("5a7f4fe8f5e885ba24e53b3b"), "name" : "Polo Shirt", "sizes" : "Small", "colors" : "orange" }
+{ "_id" : ObjectId("5a7f4fe8f5e885ba24e53b3b"), "name" : "Polo Shirt", "sizes" : "Small", "colors" : "red" }
+{ "_id" : ObjectId("5a7f4fe8f5e885ba24e53b3b"), "name" : "Polo Shirt", "sizes" : "Medium", "colors" : "navy" }
+{ "_id" : ObjectId("5a7f4fe8f5e885ba24e53b3b"), "name" : "Polo Shirt", "sizes" : "Medium", "colors" : "white" }
+{ "_id" : ObjectId("5a7f4fe8f5e885ba24e53b3b"), "name" : "Polo Shirt", "sizes" : "Medium", "colors" : "orange" }
+{ "_id" : ObjectId("5a7f4fe8f5e885ba24e53b3b"), "name" : "Polo Shirt", "sizes" : "Medium", "colors" : "red" }
+{ "_id" : ObjectId("5a7f4fe8f5e885ba24e53b3b"), "name" : "Polo Shirt", "sizes" : "Large", "colors" : "navy" }
+{ "_id" : ObjectId("5a7f4fe8f5e885ba24e53b3b"), "name" : "Polo Shirt", "sizes" : "Large", "colors" : "white" }
+{ "_id" : ObjectId("5a7f4fe8f5e885ba24e53b3b"), "name" : "Polo Shirt", "sizes" : "Large", "colors" : "orange" }
+{ "_id" : ObjectId("5a7f4fe8f5e885ba24e53b3b"), "name" : "Polo Shirt", "sizes" : "Large", "colors" : "red" }
+{ "_id" : ObjectId("5a7f4fe9f5e885ba24e53b3c"), "name" : "T-Shirt", "sizes" : "Small", "colors" : "navy" }
+{ "_id" : ObjectId("5a7f4fe9f5e885ba24e53b3c"), "name" : "T-Shirt", "sizes" : "Small", "colors" : "black" }
+{ "_id" : ObjectId("5a7f4fe9f5e885ba24e53b3c"), "name" : "T-Shirt", "sizes" : "Small", "colors" : "orange" }
+{ "_id" : ObjectId("5a7f4fe9f5e885ba24e53b3c"), "name" : "T-Shirt", "sizes" : "Small", "colors" : "red" }
+{ "_id" : ObjectId("5a7f4fe9f5e885ba24e53b3c"), "name" : "T-Shirt", "sizes" : "Medium", "colors" : "navy" }
+{ "_id" : ObjectId("5a7f4fe9f5e885ba24e53b3c"), "name" : "T-Shirt", "sizes" : "Medium", "colors" : "black" }
+{ "_id" : ObjectId("5a7f4fe9f5e885ba24e53b3c"), "name" : "T-Shirt", "sizes" : "Medium", "colors" : "orange" }
+{ "_id" : ObjectId("5a7f4fe9f5e885ba24e53b3c"), "name" : "T-Shirt", "sizes" : "Medium", "colors" : "red" }
+Type "it" for more
+-------------------------------------------------------------------------------------------
+> db.inventory.aggregate([{$unwind:"$sizes"},{$unwind:"$colors"},{$group:{_id:{"size":"$sizes","color":"$colors"}}}])
+{ "_id" : { "size" : "36x32", "color" : "orange" } }
+{ "_id" : { "size" : "36x32", "color" : "white" } }
+{ "_id" : { "size" : "31x30", "color" : "orange" } }
+{ "_id" : { "size" : "31x30", "color" : "white" } }
+{ "_id" : { "size" : "31x30", "color" : "violet" } }
+{ "_id" : { "size" : "31x30", "color" : "navy" } }
+{ "_id" : { "size" : "32x32", "color" : "violet" } }
+{ "_id" : { "size" : "32x32", "color" : "navy" } }
+{ "_id" : { "size" : "X-Large", "color" : "red" } }
+{ "_id" : { "size" : "X-Large", "color" : "black" } }
+{ "_id" : { "size" : "Large", "color" : "black" } }
+{ "_id" : { "size" : "Large", "color" : "red" } }
+{ "_id" : { "size" : "Large", "color" : "orange" } }
+{ "_id" : { "size" : "X-Large", "color" : "navy" } }
+{ "_id" : { "size" : "Large", "color" : "navy" } }
+{ "_id" : { "size" : "36x32", "color" : "violet" } }
+{ "_id" : { "size" : "Medium", "color" : "red" } }
+{ "_id" : { "size" : "Medium", "color" : "orange" } }
+{ "_id" : { "size" : "Medium", "color" : "white" } }
+{ "_id" : { "size" : "X-Large", "color" : "orange" } }
+Type "it" for more
+-------------------------------------------------------------------------------------------
+> db.inventory.aggregate([{$unwind:"$sizes"},{$unwind:"$colors"},{$group:{_id:{"size":"$sizes","color":"$colors"}, count:{$sum:1}}}])
+{ "_id" : { "size" : "36x32", "color" : "orange" }, "count" : 1 }
+{ "_id" : { "size" : "36x32", "color" : "white" }, "count" : 1 }
+{ "_id" : { "size" : "31x30", "color" : "orange" }, "count" : 1 }
+{ "_id" : { "size" : "31x30", "color" : "white" }, "count" : 1 }
+{ "_id" : { "size" : "31x30", "color" : "violet" }, "count" : 1 }
+{ "_id" : { "size" : "31x30", "color" : "navy" }, "count" : 1 }
+{ "_id" : { "size" : "32x32", "color" : "violet" }, "count" : 1 }
+{ "_id" : { "size" : "32x32", "color" : "navy" }, "count" : 1 }
+{ "_id" : { "size" : "X-Large", "color" : "red" }, "count" : 1 }
+{ "_id" : { "size" : "X-Large", "color" : "black" }, "count" : 1 }
+{ "_id" : { "size" : "Large", "color" : "black" }, "count" : 1 }
+{ "_id" : { "size" : "Large", "color" : "red" }, "count" : 2 }
+{ "_id" : { "size" : "Large", "color" : "orange" }, "count" : 2 }
+{ "_id" : { "size" : "X-Large", "color" : "navy" }, "count" : 1 }
+{ "_id" : { "size" : "Large", "color" : "navy" }, "count" : 2 }
+{ "_id" : { "size" : "36x32", "color" : "violet" }, "count" : 1 }
+{ "_id" : { "size" : "Medium", "color" : "red" }, "count" : 2 }
+{ "_id" : { "size" : "Medium", "color" : "orange" }, "count" : 2 }
+{ "_id" : { "size" : "Medium", "color" : "white" }, "count" : 1 }
+{ "_id" : { "size" : "X-Large", "color" : "orange" }, "count" : 1 }
+Type "it" for more
+************************************************************************************************
+$project and mathematical operation
+*************************************************************************************************
+Cluster0-shard-0:PRIMARY> db.solarSystem.aggregate([{$project:{shit:"$name", _id:0, My:{$multiply:[{$divide:["$gravity.value",9.8]},88]}}}])
+{ "shit" : "Earth", "My" : 88 }
+{ "shit" : "Neptune", "My" : 100.12244897959184 }
+{ "shit" : "Uranus", "My" : 79.64897959183672 }
+{ "shit" : "Saturn", "My" : 93.74693877551019 }
+{ "shit" : "Jupiter", "My" : 222.60408163265302 }
+{ "shit" : "Venus", "My" : 79.64897959183672 }
+{ "shit" : "Mercury", "My" : 29.09387755102041 }
+{ "shit" : "Sun", "My" : 2460.408163265306 }
+{ "shit" : "Mars", "My" : 33.31428571428572 }

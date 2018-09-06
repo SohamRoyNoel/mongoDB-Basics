@@ -1,0 +1,223 @@
+C:\Program Files\MongoDB\Server\3.4\bin\mongo.exe
+MongoDB shell version v3.4.10
+connecting to: mongodb://localhost:27017/mango
+MongoDB server version: 3.4.10
+> db.players.find()
+{ "_id" : ObjectId("59f9773bb3eb0565c89cbe9d"), "position" : "right", "id" : "101", "weight" : 200 }
+{ "_id" : ObjectId("59f979dcb3eb0565c89cbe9e"), "position" : "right", "id" : "102", "weight" : 200 }
+{ "_id" : ObjectId("59f979dcb3eb0565c89cbe9f"), "position" : "left", "id" : "103", "weight" : 150 }
+{ "_id" : ObjectId("59f979dcb3eb0565c89cbea0"), "position" : "forward", "id" : "104", "weight" : 200 }
+{ "_id" : ObjectId("59f979dcb3eb0565c89cbea1"), "position" : "left", "id" : "105", "weight" : 158 }
+> db.players.find().pretty()
+{
+	"_id" : ObjectId("59f9773bb3eb0565c89cbe9d"),
+	"position" : "right",
+	"id" : "101",
+	"weight" : 200
+}
+{
+	"_id" : ObjectId("59f979dcb3eb0565c89cbe9e"),
+	"position" : "right",
+	"id" : "102",
+	"weight" : 200
+}
+{
+	"_id" : ObjectId("59f979dcb3eb0565c89cbe9f"),
+	"position" : "left",
+	"id" : "103",
+	"weight" : 150
+}
+{
+	"_id" : ObjectId("59f979dcb3eb0565c89cbea0"),
+	"position" : "forward",
+	"id" : "104",
+	"weight" : 200
+}
+{
+	"_id" : ObjectId("59f979dcb3eb0565c89cbea1"),
+	"position" : "left",
+	"id" : "105",
+	"weight" : 158
+}
+> db.players.remove(
+    "_id" : ObjectId("59f979dcb3eb0565c89cbea1")
+)
+2017-11-02T00:26:17.017+0300 E QUERY    [thread1] SyntaxError: missing ) after argument list @(shell):2:10
+> db.players.remove(
+    {"_id" : ObjectId("59f979dcb3eb0565c89cbea1")}
+)
+WriteResult({ "nRemoved" : 1 })
+> db.players.find()
+{ "_id" : ObjectId("59f9773bb3eb0565c89cbe9d"), "position" : "right", "id" : "101", "weight" : 200 }
+{ "_id" : ObjectId("59f979dcb3eb0565c89cbe9e"), "position" : "right", "id" : "102", "weight" : 200 }
+{ "_id" : ObjectId("59f979dcb3eb0565c89cbe9f"), "position" : "left", "id" : "103", "weight" : 150 }
+{ "_id" : ObjectId("59f979dcb3eb0565c89cbea0"), "position" : "forward", "id" : "104", "weight" : 200 }
+> db.players.insert(
+    {
+        "position" : "right",
+        "id" : "181",
+        "weight" : 200
+    }
+)
+WriteResult({ "nInserted" : 1 })
+> db.players.remove(
+    {
+        "id":"181"
+    }
+)
+WriteResult({ "nRemoved" : 1 })
+> db.players.find()
+{ "_id" : ObjectId("59f9773bb3eb0565c89cbe9d"), "position" : "right", "id" : "101", "weight" : 200 }
+{ "_id" : ObjectId("59f979dcb3eb0565c89cbe9e"), "position" : "right", "id" : "102", "weight" : 200 }
+{ "_id" : ObjectId("59f979dcb3eb0565c89cbe9f"), "position" : "left", "id" : "103", "weight" : 150 }
+{ "_id" : ObjectId("59f979dcb3eb0565c89cbea0"), "position" : "forward", "id" : "104", "weight" : 200 }
+> db.players.insert(
+    {
+        "position" : "right",
+        "id" : "181",
+        "weight" : 200
+    },
+    {
+        "position" : "Forwrd",
+        "id" : "181",
+        "weight" : 200
+    },
+    {
+        "position" : "Midfielder",
+        "id" : "181",
+        "weight" : 200
+    },
+    {
+        "position" : "defender",
+        "id" : "181",
+        "weight" : 200
+    }
+        
+)
+WriteResult({ "nInserted" : 1 })
+> db.players.insert([
+    {
+        "position" : "right",
+        "id" : "181",
+        "weight" : 200
+    },
+    {
+        "position" : "Forwrd",
+        "id" : "181",
+        "weight" : 200
+    },
+    {
+        "position" : "Midfielder",
+        "id" : "181",
+        "weight" : 200
+    },
+    {
+        "position" : "defender",
+        "id" : "181",
+        "weight" : 200
+    }
+        
+])
+BulkWriteResult({
+	"writeErrors" : [ ],
+	"writeConcernErrors" : [ ],
+	"nInserted" : 4,
+	"nUpserted" : 0,
+	"nMatched" : 0,
+	"nModified" : 0,
+	"nRemoved" : 0,
+	"upserted" : [ ]
+})
+
+
+> db.players.find()
+{ "_id" : ObjectId("59f9773bb3eb0565c89cbe9d"), "position" : "right", "id" : "101", "weight" : 200 }
+{ "_id" : ObjectId("59f979dcb3eb0565c89cbe9e"), "position" : "right", "id" : "102", "weight" : 200 }
+{ "_id" : ObjectId("59f979dcb3eb0565c89cbe9f"), "position" : "left", "id" : "103", "weight" : 150 }
+{ "_id" : ObjectId("59f979dcb3eb0565c89cbea0"), "position" : "forward", "id" : "104", "weight" : 200 }
+{ "_id" : ObjectId("59fa3e5fc6c2cac27841ad10"), "position" : "right", "id" : "181", "weight" : 200 }
+{ "_id" : ObjectId("59fa3e82c6c2cac27841ad11"), "position" : "right", "id" : "181", "weight" : 200 }
+{ "_id" : ObjectId("59fa3e82c6c2cac27841ad12"), "position" : "Forwrd", "id" : "181", "weight" : 200 }
+{ "_id" : ObjectId("59fa3e82c6c2cac27841ad13"), "position" : "Midfielder", "id" : "181", "weight" : 200 }
+{ "_id" : ObjectId("59fa3e82c6c2cac27841ad14"), "position" : "defender", "id" : "181", "weight" : 200 }
+
+----------------------------------------------------------------------copy from the file where you generated this;
+> db.players.update(
+    {"_id" : ObjectId("59f9773bb3eb0565c89cbe9d")},
+    {
+        "position":"Wing",
+        "id": "99",
+        "weight": 200  
+    }
+)
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.players.find()
+{ "_id" : ObjectId("59f9773bb3eb0565c89cbe9d"), "position" : "Wing", "id" : "99", "weight" : 200 }
+{ "_id" : ObjectId("59f979dcb3eb0565c89cbe9e"), "position" : "right", "id" : "102", "weight" : 200 }
+{ "_id" : ObjectId("59f979dcb3eb0565c89cbe9f"), "position" : "left", "id" : "103", "weight" : 150 }
+{ "_id" : ObjectId("59f979dcb3eb0565c89cbea0"), "position" : "forward", "id" : "104", "weight" : 200 }
+{ "_id" : ObjectId("59fa3e5fc6c2cac27841ad10"), "position" : "right", "id" : "181", "weight" : 200 }
+{ "_id" : ObjectId("59fa3e82c6c2cac27841ad11"), "position" : "right", "id" : "181", "weight" : 200 }
+{ "_id" : ObjectId("59fa3e82c6c2cac27841ad12"), "position" : "Forwrd", "id" : "181", "weight" : 200 }
+{ "_id" : ObjectId("59fa3e82c6c2cac27841ad13"), "position" : "Midfielder", "id" : "181", "weight" : 200 }
+{ "_id" : ObjectId("59fa3e82c6c2cac27841ad14"), "position" : "defender", "id" : "181", "weight" : 200 }
+
+
+
+
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.players.find()
+{ "_id" : ObjectId("59f9773bb3eb0565c89cbe9d"), "position" : "Wing", "id" : "99", "weight" : 200 }
+{ "_id" : ObjectId("59f979dcb3eb0565c89cbe9e"), "position" : "right", "id" : "102", "weight" : 200 }
+{ "_id" : ObjectId("59f979dcb3eb0565c89cbe9f"), "position" : "left", "id" : "103", "weight" : 150 }
+{ "_id" : ObjectId("59f979dcb3eb0565c89cbea0"), "position" : "forward", "id" : "104", "weight" : 200 }
+{ "_id" : ObjectId("59fa3e5fc6c2cac27841ad10"), "position" : "right", "id" : "181", "weight" : 200 }
+{ "_id" : ObjectId("59fa3e82c6c2cac27841ad11"), "position" : "right", "id" : "181", "weight" : 200 }
+{ "_id" : ObjectId("59fa3e82c6c2cac27841ad12"), "position" : "Forwrd", "id" : "181", "weight" : 200 }
+{ "_id" : ObjectId("59fa3e82c6c2cac27841ad13"), "position" : "Midfielder", "id" : "181", "weight" : 200 }
+{ "_id" : ObjectId("59fa3e82c6c2cac27841ad14"), "position" : "defender", "id" : "181", "weight" : 200 }
+> db.players.findone()
+2017-11-02T01:04:27.058+0300 E QUERY    [thread1] TypeError: db.players.findone is not a function :
+@(shell):1:1
+> db.players.update(
+    {"_id" : ObjectId("59f979dcb3eb0565c89cbe9f")},
+    {
+         "position":"FRONT",
+         "id": "109",
+         "weight": 150
+    }
+)
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.players.findOne()
+{
+	"_id" : ObjectId("59f9773bb3eb0565c89cbe9d"),
+	"position" : "Wing",
+	"id" : "99",
+	"weight" : 200
+}
+> db.players.findTwo()
+2017-11-02T01:07:13.660+0300 E QUERY    [thread1] TypeError: db.players.findTwo is not a function :
+@(shell):1:1
+> db.players.findOne()
+{
+	"_id" : ObjectId("59f9773bb3eb0565c89cbe9d"),
+	"position" : "Wing",
+	"id" : "99",
+	"weight" : 200
+}
+> db.players.findTwo()
+2017-11-02T01:07:58.181+0300 E QUERY    [thread1] TypeError: db.players.findTwo is not a function :
+@(shell):1:1
+
+
+
+
+@(shell):1:1
+> db.players.drop()
+true
+> db
+mango
+mango
+2017-11-02T01:13:41.214+0300 E QUERY    [thread1] ReferenceError: mango is not defined :
+@(shell):1:1
+> show collections

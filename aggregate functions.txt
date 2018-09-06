@@ -1,0 +1,41 @@
+****************************************************************
+aggregate functions
+****************************************************************
+> db.Bank.aggregate({
+    $group:{
+                _id:"$eyeColor",
+                total:{$sum:1}
+            }
+})
+{ "_id" : "brown", "total" : 12 }
+{ "_id" : "green", "total" : 14 }
+{ "_id" : "blue", "total" : 9 }
+
+
+> db.Bank.aggregate({
+    $group:{
+                _id:"$eyeColor",
+                avg:{$avg:"$age"}
+           }
+})
+{ "_id" : "brown", "avg" : 30.416666666666668 }
+{ "_id" : "green", "avg" : 32.642857142857146 }
+{ "_id" : "blue", "avg" : 32.22222222222222 }
+> db.Bank.aggregate({
+    $group:{
+                _id:"$eyeColor",
+                avg:{$max:"$balance" }
+           }
+})
+{ "_id" : "brown", "avg" : "$3,704.58" }
+{ "_id" : "green", "avg" : "$3,818.97" }
+{ "_id" : "blue", "avg" : "$3,960.64" }
+>  db.Bank.aggregate({
+    $group:{
+                _id:"$eyeColor",
+                avg:{$min:"$balance" }
+           }
+})
+{ "_id" : "brown", "avg" : "$1,335.04" }
+{ "_id" : "green", "avg" : "$1,247.08" }
+{ "_id" : "blue", "avg" : "$1,029.91" }

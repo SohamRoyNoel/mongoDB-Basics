@@ -1,0 +1,656 @@
+**************************************************************
+explain()
+***********************************************************************
+C:\Users\HP>mongo
+MongoDB shell version v3.4.10
+connecting to: mongodb://127.0.0.1:27017
+MongoDB server version: 3.4.10
+Server has startup warnings:
+2018-02-01T11:12:06.996-0700 I CONTROL  [initandlisten]
+2018-02-01T11:12:06.997-0700 I CONTROL  [initandlisten] ** WARNING: Access control is not enabled for the database.
+2018-02-01T11:12:06.997-0700 I CONTROL  [initandlisten] **          Read and write access to data and configuration is unrestricted.
+2018-02-01T11:12:06.997-0700 I CONTROL  [initandlisten]
+
+>  use mng
+switched to db mng
+> for(i=0;i<100;i++){for(j=0;j<100;j++){x=[];for(k=0;k<100;k++){x.push({a:i,b:j,c:k,_id:(100*100*i+100*j+k)})};db.example.insert(x)}}
+BulkWriteResult({
+        "writeErrors" : [ ],
+        "writeConcernErrors" : [ ],
+        "nInserted" : 100,
+        "nUpserted" : 0,
+        "nMatched" : 0,
+        "nModified" : 0,
+        "nRemoved" : 0,
+        "upserted" : [ ]
+})
+>  db.example.find()
+{ "_id" : 0, "a" : 0, "b" : 0, "c" : 0 }
+{ "_id" : 1, "a" : 0, "b" : 0, "c" : 1 }
+{ "_id" : 2, "a" : 0, "b" : 0, "c" : 2 }
+{ "_id" : 3, "a" : 0, "b" : 0, "c" : 3 }
+{ "_id" : 4, "a" : 0, "b" : 0, "c" : 4 }
+{ "_id" : 5, "a" : 0, "b" : 0, "c" : 5 }
+{ "_id" : 6, "a" : 0, "b" : 0, "c" : 6 }
+{ "_id" : 7, "a" : 0, "b" : 0, "c" : 7 }
+{ "_id" : 8, "a" : 0, "b" : 0, "c" : 8 }
+{ "_id" : 9, "a" : 0, "b" : 0, "c" : 9 }
+{ "_id" : 10, "a" : 0, "b" : 0, "c" : 10 }
+{ "_id" : 11, "a" : 0, "b" : 0, "c" : 11 }
+{ "_id" : 12, "a" : 0, "b" : 0, "c" : 12 }
+{ "_id" : 13, "a" : 0, "b" : 0, "c" : 13 }
+{ "_id" : 14, "a" : 0, "b" : 0, "c" : 14 }
+{ "_id" : 15, "a" : 0, "b" : 0, "c" : 15 }
+{ "_id" : 16, "a" : 0, "b" : 0, "c" : 16 }
+{ "_id" : 17, "a" : 0, "b" : 0, "c" : 17 }
+{ "_id" : 18, "a" : 0, "b" : 0, "c" : 18 }
+{ "_id" : 19, "a" : 0, "b" : 0, "c" : 19 }
+Type "it" for more
+> db.example.createIndex({"a":1,"b":1})
+{
+        "createdCollectionAutomatically" : false,
+        "numIndexesBefore" : 1,
+        "numIndexesAfter" : 2,
+        "ok" : 1
+}
+> db.example.createIndex({"b":1})
+{
+        "createdCollectionAutomatically" : false,
+        "numIndexesBefore" : 2,
+        "numIndexesAfter" : 3,
+        "ok" : 1
+}
+> var exp=db.example.explain()
+> exp.help()
+Explainable operations
+        .aggregate(...) - explain an aggregation operation
+        .count(...) - explain a count operation
+        .distinct(...) - explain a distinct operation
+        .find(...) - get an explainable query
+        .findAndModify(...) - explain a findAndModify operation
+        .group(...) - explain a group operation
+        .remove(...) - explain a remove operation
+        .update(...) - explain an update operation
+Explainable collection methods
+        .getCollection()
+        .getVerbosity()
+        .setVerbosity(verbosity)
+> db.example.find({"a":50,"b":50})
+{ "_id" : 505000, "a" : 50, "b" : 50, "c" : 0 }
+{ "_id" : 505001, "a" : 50, "b" : 50, "c" : 1 }
+{ "_id" : 505002, "a" : 50, "b" : 50, "c" : 2 }
+{ "_id" : 505003, "a" : 50, "b" : 50, "c" : 3 }
+{ "_id" : 505004, "a" : 50, "b" : 50, "c" : 4 }
+{ "_id" : 505005, "a" : 50, "b" : 50, "c" : 5 }
+{ "_id" : 505006, "a" : 50, "b" : 50, "c" : 6 }
+{ "_id" : 505007, "a" : 50, "b" : 50, "c" : 7 }
+{ "_id" : 505008, "a" : 50, "b" : 50, "c" : 8 }
+{ "_id" : 505009, "a" : 50, "b" : 50, "c" : 9 }
+{ "_id" : 505010, "a" : 50, "b" : 50, "c" : 10 }
+{ "_id" : 505011, "a" : 50, "b" : 50, "c" : 11 }
+{ "_id" : 505012, "a" : 50, "b" : 50, "c" : 12 }
+{ "_id" : 505013, "a" : 50, "b" : 50, "c" : 13 }
+{ "_id" : 505014, "a" : 50, "b" : 50, "c" : 14 }
+{ "_id" : 505015, "a" : 50, "b" : 50, "c" : 15 }
+{ "_id" : 505016, "a" : 50, "b" : 50, "c" : 16 }
+{ "_id" : 505017, "a" : 50, "b" : 50, "c" : 17 }
+{ "_id" : 505018, "a" : 50, "b" : 50, "c" : 18 }
+{ "_id" : 505019, "a" : 50, "b" : 50, "c" : 19 }
+Type "it" for more
+> exp.find({"a":50,"b":50}).sort({"b":-1}) //USING exp THAT HAS AN OBJECT RETURN TYPE
+{
+        "queryPlanner" : {
+                "plannerVersion" : 1,
+                "namespace" : "mng.example",
+                "indexFilterSet" : false,
+                "parsedQuery" : {
+                        "$and" : [
+                                {
+                                        "a" : {
+                                                "$eq" : 50
+                                        }
+                                },
+                                {
+                                        "b" : {
+                                                "$eq" : 50
+                                        }
+                                }
+                        ]
+                },
+                "winningPlan" : {
+                        "stage" : "FETCH",
+                        "inputStage" : {
+                                "stage" : "IXSCAN",
+                                "keyPattern" : {
+                                        "a" : 1,
+                                        "b" : 1
+                                },
+                                "indexName" : "a_1_b_1",
+                                "isMultiKey" : false,
+                                "multiKeyPaths" : {
+                                        "a" : [ ],
+                                        "b" : [ ]
+                                },
+                                "isUnique" : false,
+                                "isSparse" : false,
+                                "isPartial" : false,
+                                "indexVersion" : 1,
+                                "direction" : "backward",
+                                "indexBounds" : {
+                                        "a" : [
+                                                "[50.0, 50.0]"
+                                        ],
+                                        "b" : [
+                                                "[50.0, 50.0]"
+                                        ]
+                                }
+                        }
+                },
+                "rejectedPlans" : [
+                        {
+                                "stage" : "FETCH",
+                                "filter" : {
+                                        "a" : {
+                                                "$eq" : 50
+                                        }
+                                },
+                                "inputStage" : {
+                                        "stage" : "IXSCAN",
+                                        "keyPattern" : {
+                                                "b" : 1
+                                        },
+                                        "indexName" : "b_1",
+                                        "isMultiKey" : false,
+                                        "multiKeyPaths" : {
+                                                "b" : [ ]
+                                        },
+                                        "isUnique" : false,
+                                        "isSparse" : false,
+                                        "isPartial" : false,
+                                        "indexVersion" : 1,
+                                        "direction" : "backward",
+                                        "indexBounds" : {
+                                                "b" : [
+                                                        "[50.0, 50.0]"
+                                                ]
+                                        }
+                                }
+                        }
+                ]
+        },
+        "serverInfo" : {
+                "host" : "DESKTOP-88GJBMO",
+                "port" : 27017,
+                "version" : "3.4.10",
+                "gitVersion" : "078f28920cb24de0dd479b5ea6c66c644f6326e9"
+        },
+        "ok" : 1
+}
+> db.example.explain().find({"a":50,"b":50}).sort({"b":-1}) //GIVES SAME
+{
+        "queryPlanner" : {
+                "plannerVersion" : 1,
+                "namespace" : "mng.example",
+                "indexFilterSet" : false,
+                "parsedQuery" : {
+                        "$and" : [
+                                {
+                                        "a" : {
+                                                "$eq" : 50
+                                        }
+                                },
+                                {
+                                        "b" : {
+                                                "$eq" : 50
+                                        }
+                                }
+                        ]
+                },
+                "winningPlan" : {
+                        "stage" : "FETCH",
+                        "inputStage" : {
+                                "stage" : "IXSCAN",
+                                "keyPattern" : {
+                                        "a" : 1,
+                                        "b" : 1
+                                },
+                                "indexName" : "a_1_b_1",
+                                "isMultiKey" : false,
+                                "multiKeyPaths" : {
+                                        "a" : [ ],
+                                        "b" : [ ]
+                                },
+                                "isUnique" : false,
+                                "isSparse" : false,
+                                "isPartial" : false,
+                                "indexVersion" : 1,
+                                "direction" : "backward",
+                                "indexBounds" : {
+                                        "a" : [
+                                                "[50.0, 50.0]"
+                                        ],
+                                        "b" : [
+                                                "[50.0, 50.0]"
+                                        ]
+                                }
+                        }
+                },
+                "rejectedPlans" : [
+                        {
+                                "stage" : "FETCH",
+                                "filter" : {
+                                        "a" : {
+                                                "$eq" : 50
+                                        }
+                                },
+                                "inputStage" : {
+                                        "stage" : "IXSCAN",
+                                        "keyPattern" : {
+                                                "b" : 1
+                                        },
+                                        "indexName" : "b_1",
+                                        "isMultiKey" : false,
+                                        "multiKeyPaths" : {
+                                                "b" : [ ]
+                                        },
+                                        "isUnique" : false,
+                                        "isSparse" : false,
+                                        "isPartial" : false,
+                                        "indexVersion" : 1,
+                                        "direction" : "backward",
+                                        "indexBounds" : {
+                                                "b" : [
+                                                        "[50.0, 50.0]"
+                                                ]
+                                        }
+                                }
+                        }
+                ]
+        },
+        "serverInfo" : {
+                "host" : "DESKTOP-88GJBMO",
+                "port" : 27017,
+                "version" : "3.4.10",
+                "gitVersion" : "078f28920cb24de0dd479b5ea6c66c644f6326e9"
+        },
+        "ok" : 1
+}
+************************************************************************************************************
+In older version of mongodb, explain is used like
+===== db.example.find({"a":50,"b":50}).sort({"b":-1}).explain()=====================
+but it is changed bcz in certain cases query returns an CURSOR, then tou cant use explain......
+ db.example.find({"a":50,"b":50}).sort({"b":-1}).count().explain() ====is wrong
+************************************************************************************************************
+========OLD=========
+> db.example.find({"a":50,"b":50}).sort({"b":-1}).count().explain()
+2018-02-01T21:54:22.396+0300 E QUERY    [thread1] TypeError: db.example.find(...).sort(...).count(...).explain is not a function :
+@(shell):1:1
+************************************************************************************************************
+========NEW=========
+> exp.find({"a":50,"b":50}).sort({"b":-1})
+{
+        "queryPlanner" : {
+                "plannerVersion" : 1,
+                "namespace" : "mng.example",
+                "indexFilterSet" : false,
+                "parsedQuery" : {
+                        "$and" : [
+                                {
+                                        "a" : {
+                                                "$eq" : 50
+                                        }
+                                },
+                                {
+                                        "b" : {
+                                                "$eq" : 50
+                                        }
+                                }
+                        ]
+                },
+                "winningPlan" : {
+                        "stage" : "FETCH",
+                        "inputStage" : {
+                                "stage" : "IXSCAN",
+                                "keyPattern" : {
+                                        "a" : 1,
+                                        "b" : 1
+                                },
+                                "indexName" : "a_1_b_1",
+                                "isMultiKey" : false,
+                                "multiKeyPaths" : {
+                                        "a" : [ ],
+                                        "b" : [ ]
+                                },
+                                "isUnique" : false,
+                                "isSparse" : false,
+                                "isPartial" : false,
+                                "indexVersion" : 1,
+                                "direction" : "backward",
+                                "indexBounds" : {
+                                        "a" : [
+                                                "[50.0, 50.0]"
+                                        ],
+                                        "b" : [
+                                                "[50.0, 50.0]"
+                                        ]
+                                }
+                        }
+                },
+                "rejectedPlans" : [
+                        {
+                                "stage" : "FETCH",
+                                "filter" : {
+                                        "a" : {
+                                                "$eq" : 50
+                                        }
+                                },
+                                "inputStage" : {
+                                        "stage" : "IXSCAN",
+                                        "keyPattern" : {
+                                                "b" : 1
+                                        },
+                                        "indexName" : "b_1",
+                                        "isMultiKey" : false,
+                                        "multiKeyPaths" : {
+                                                "b" : [ ]
+                                        },
+                                        "isUnique" : false,
+                                        "isSparse" : false,
+                                        "isPartial" : false,
+                                        "indexVersion" : 1,
+                                        "direction" : "backward",
+                                        "indexBounds" : {
+                                                "b" : [
+                                                        "[50.0, 50.0]"
+                                                ]
+                                        }
+                                }
+                        }
+                ]
+        },
+        "serverInfo" : {
+                "host" : "DESKTOP-88GJBMO",
+                "port" : 27017,
+                "version" : "3.4.10",
+                "gitVersion" : "078f28920cb24de0dd479b5ea6c66c644f6326e9"
+        },
+        "ok" : 1
+}
+************************************************************************************************************
+3 WAYS TO USE explain()
+************************************************************************************************************
+=====================================================================1
+> var cursor=db.example.find({"a":50,"b":50})
+> cursor.explain()
+{
+        "queryPlanner" : {
+                "plannerVersion" : 1,
+                "namespace" : "mng.example",
+                "indexFilterSet" : false,
+                "parsedQuery" : {
+                        "$and" : [
+                                {
+                                        "a" : {
+                                                "$eq" : 50
+                                        }
+                                },
+                                {
+                                        "b" : {
+                                                "$eq" : 50
+                                        }
+                                }
+                        ]
+                },
+                "winningPlan" : {
+                        "stage" : "FETCH",
+                        "inputStage" : {
+                                "stage" : "IXSCAN",
+                                "keyPattern" : {
+                                        "a" : 1,
+                                        "b" : 1
+                                },
+                                "indexName" : "a_1_b_1",
+                                "isMultiKey" : false,
+                                "multiKeyPaths" : {
+                                        "a" : [ ],
+                                        "b" : [ ]
+                                },
+                                "isUnique" : false,
+                                "isSparse" : false,
+                                "isPartial" : false,
+                                "indexVersion" : 1,
+                                "direction" : "forward",
+                                "indexBounds" : {
+                                        "a" : [
+                                                "[50.0, 50.0]"
+                                        ],
+                                        "b" : [
+                                                "[50.0, 50.0]"
+                                        ]
+                                }
+                        }
+                },
+                "rejectedPlans" : [
+                        {
+                                "stage" : "FETCH",
+                                "filter" : {
+                                        "a" : {
+                                                "$eq" : 50
+                                        }
+                                },
+                                "inputStage" : {
+                                        "stage" : "IXSCAN",
+                                        "keyPattern" : {
+                                                "b" : 1
+                                        },
+                                        "indexName" : "b_1",
+                                        "isMultiKey" : false,
+                                        "multiKeyPaths" : {
+                                                "b" : [ ]
+                                        },
+                                        "isUnique" : false,
+                                        "isSparse" : false,
+                                        "isPartial" : false,
+                                        "indexVersion" : 1,
+                                        "direction" : "forward",
+                                        "indexBounds" : {
+                                                "b" : [
+                                                        "[50.0, 50.0]"
+                                                ]
+                                        }
+                                }
+                        }
+                ]
+        },
+        "serverInfo" : {
+                "host" : "DESKTOP-88GJBMO",
+                "port" : 27017,
+                "version" : "3.4.10",
+                "gitVersion" : "078f28920cb24de0dd479b5ea6c66c644f6326e9"
+        },
+        "ok" : 1
+}
+> cursor.next()
+{ "_id" : 505000, "a" : 50, "b" : 50, "c" : 0 }
+> cursor.next()
+{ "_id" : 505001, "a" : 50, "b" : 50, "c" : 1 }
+====================================================================2
+> db.example.find({"a":50,"b":50}).explain()
+{
+        "queryPlanner" : {
+                "plannerVersion" : 1,
+                "namespace" : "mng.example",
+                "indexFilterSet" : false,
+                "parsedQuery" : {
+                        "$and" : [
+                                {
+                                        "a" : {
+                                                "$eq" : 50
+                                        }
+                                },
+                                {
+                                        "b" : {
+                                                "$eq" : 50
+                                        }
+                                }
+                        ]
+                },
+                "winningPlan" : {
+                        "stage" : "FETCH",
+                        "inputStage" : {
+                                "stage" : "IXSCAN",
+                                "keyPattern" : {
+                                        "a" : 1,
+                                        "b" : 1
+                                },
+                                "indexName" : "a_1_b_1",
+                                "isMultiKey" : false,
+                                "multiKeyPaths" : {
+                                        "a" : [ ],
+                                        "b" : [ ]
+                                },
+                                "isUnique" : false,
+                                "isSparse" : false,
+                                "isPartial" : false,
+                                "indexVersion" : 1,
+                                "direction" : "forward",
+                                "indexBounds" : {
+                                        "a" : [
+                                                "[50.0, 50.0]"
+                                        ],
+                                        "b" : [
+                                                "[50.0, 50.0]"
+                                        ]
+                                }
+                        }
+                },
+                "rejectedPlans" : [
+                        {
+                                "stage" : "FETCH",
+                                "filter" : {
+                                        "a" : {
+                                                "$eq" : 50
+                                        }
+                                },
+                                "inputStage" : {
+                                        "stage" : "IXSCAN",
+                                        "keyPattern" : {
+                                                "b" : 1
+                                        },
+                                        "indexName" : "b_1",
+                                        "isMultiKey" : false,
+                                        "multiKeyPaths" : {
+                                                "b" : [ ]
+                                        },
+                                        "isUnique" : false,
+                                        "isSparse" : false,
+                                        "isPartial" : false,
+                                        "indexVersion" : 1,
+                                        "direction" : "forward",
+                                        "indexBounds" : {
+                                                "b" : [
+                                                        "[50.0, 50.0]"
+                                                ]
+                                        }
+                                }
+                        }
+                ]
+        },
+        "serverInfo" : {
+                "host" : "DESKTOP-88GJBMO",
+                "port" : 27017,
+                "version" : "3.4.10",
+                "gitVersion" : "078f28920cb24de0dd479b5ea6c66c644f6326e9"
+        },
+        "ok" : 1
+}
+=======================================================3
+> db.example.explain().find({"a":50,"b":50})
+{
+        "queryPlanner" : {
+                "plannerVersion" : 1,
+                "namespace" : "mng.example",
+                "indexFilterSet" : false,
+                "parsedQuery" : {
+                        "$and" : [
+                                {
+                                        "a" : {
+                                                "$eq" : 50
+                                        }
+                                },
+                                {
+                                        "b" : {
+                                                "$eq" : 50
+                                        }
+                                }
+                        ]
+                },
+                "winningPlan" : {
+                        "stage" : "FETCH",
+                        "inputStage" : {
+                                "stage" : "IXSCAN",
+                                "keyPattern" : {
+                                        "a" : 1,
+                                        "b" : 1
+                                },
+                                "indexName" : "a_1_b_1",
+                                "isMultiKey" : false,
+                                "multiKeyPaths" : {
+                                        "a" : [ ],
+                                        "b" : [ ]
+                                },
+                                "isUnique" : false,
+                                "isSparse" : false,
+                                "isPartial" : false,
+                                "indexVersion" : 1,
+                                "direction" : "forward",
+                                "indexBounds" : {
+                                        "a" : [
+                                                "[50.0, 50.0]"
+                                        ],
+                                        "b" : [
+                                                "[50.0, 50.0]"
+                                        ]
+                                }
+                        }
+                },
+                "rejectedPlans" : [
+                        {
+                                "stage" : "FETCH",
+                                "filter" : {
+                                        "a" : {
+                                                "$eq" : 50
+                                        }
+                                },
+                                "inputStage" : {
+                                        "stage" : "IXSCAN",
+                                        "keyPattern" : {
+                                                "b" : 1
+                                        },
+                                        "indexName" : "b_1",
+                                        "isMultiKey" : false,
+                                        "multiKeyPaths" : {
+                                                "b" : [ ]
+                                        },
+                                        "isUnique" : false,
+                                        "isSparse" : false,
+                                        "isPartial" : false,
+                                        "indexVersion" : 1,
+                                        "direction" : "forward",
+                                        "indexBounds" : {
+                                                "b" : [
+                                                        "[50.0, 50.0]"
+                                                ]
+                                        }
+                                }
+                        }
+                ]
+        },
+        "serverInfo" : {
+                "host" : "DESKTOP-88GJBMO",
+                "port" : 27017,
+                "version" : "3.4.10",
+                "gitVersion" : "078f28920cb24de0dd479b5ea6c66c644f6326e9"
+        },
+        "ok" : 1
+}

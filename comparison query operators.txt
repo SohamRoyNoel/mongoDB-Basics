@@ -1,0 +1,65 @@
+******************************************************
+OPERATORS & FUNCTION
+******************************************************
+$eq	Matches values that are equal to a specified value.
+$gt	Matches values that are greater than a specified value.
+$gte	Matches values that are greater than or equal to a specified value.
+$in	Matches any of the values specified in an array.
+$lt	Matches values that are less than a specified value.
+$lte	Matches values that are less than or equal to a specified value.
+$ne	Matches all values that are not equal to a specified value.
+$nin	Matches none of the values specified in an array
+************************************************************************************************************
+************************
+DB
+************************
+db.inventory.insertMany( [
+  { item: "journal", status: "A", size: { h: 14, w: 21, uom: "cm" }, instock: [ { warehouse: "A", qty: 5 } ] },
+  { item: "notebook", status: "A",  size: { h: 8.5, w: 11, uom: "in" }, instock: [ { warehouse: "C", qty: 5 } ] },
+  { item: "paper", status: "D", size: { h: 8.5, w: 11, uom: "in" }, instock: [ { warehouse: "A", qty: 60 } ] },
+  { item: "planner", status: "D", size: { h: 22.85, w: 30, uom: "cm" }, instock: [ { warehouse: "A", qty: 40 } ] },
+  { item: "postcard", status: "A", size: { h: 10, w: 15.25, uom: "cm" }, instock: [ { warehouse: "B", qty: 15 }, { warehouse: "C", qty: 35 } ] }
+]);
+*************************************[$eq]*****************************************
+> db.inventory.find({"instock.qty":{$eq:5}})
+{ "_id" : ObjectId("5a6232e2691f1de4b36468bf"), "item" : "journal", "status" : "A", "size" : { "h" : 14, "w" : 21, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c0"), "item" : "notebook", "status" : "A", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ { "warehouse" : "C", "qty" : 5 } ] }
+********************************************************************************************
+*************************************[$eq] - 2*********************************************************
+db.inventory.find( { tags: { $eq: [ "A", "B" ] } } )
+{ _id: 3, item: { name: "ij", code: "456" }, qty: 25, tags: [ "A", "B" ] }
+{ _id: 5, item: { name: "mn", code: "000" }, qty: 20, tags: [ [ "A", "B" ], "C" ] }
+******************************************************************************************************
+MongoDB server version: 3.4.10
+> db.inventory.find({"instock.qty":{$eq:5}})
+{ "_id" : ObjectId("5a6232e2691f1de4b36468bf"), "item" : "journal", "status" : "A", "size" : { "h" : 14, "w" : 21, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c0"), "item" : "notebook", "status" : "A", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ { "warehouse" : "C", "qty" : 5 } ] }
+
+> db.inventory.find({"size.h":{$gt:9}})
+{ "_id" : ObjectId("5a6232e2691f1de4b36468bf"), "item" : "journal", "status" : "A", "size" : { "h" : 14, "w" : 21, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c2"), "item" : "planner", "status" : "D", "size" : { "h" : 22.85, "w" : 30, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 40 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c3"), "item" : "postcard", "status" : "A", "size" : { "h" : 10, "w" : 15.25, "uom" : "cm" }, "instock" : [ { "warehouse" : "B", "qty" : 15 }, { "warehouse" : "C", "qty" : 35 } ] }
+
+> db.inventory.find({"size.h":{$gte:8.5}})
+{ "_id" : ObjectId("5a6232e2691f1de4b36468bf"), "item" : "journal", "status" : "A", "size" : { "h" : 14, "w" : 21, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c0"), "item" : "notebook", "status" : "A", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ { "warehouse" : "C", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c1"), "item" : "paper", "status" : "D", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ { "warehouse" : "A", "qty" : 60 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c2"), "item" : "planner", "status" : "D", "size" : { "h" : 22.85, "w" : 30, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 40 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c3"), "item" : "postcard", "status" : "A", "size" : { "h" : 10, "w" : 15.25, "uom" : "cm" }, "instock" : [ { "warehouse" : "B", "qty" : 15 }, { "warehouse" : "C", "qty" : 35 } ] }
+
+> db.inventory.find({"size.h":{$lt:9}})
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c0"), "item" : "notebook", "status" : "A", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ { "warehouse" : "C", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c1"), "item" : "paper", "status" : "D", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ { "warehouse" : "A", "qty" : 60 } ] }
+
+> db.inventory.find({"size.h":{$lte:8.5}})
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c0"), "item" : "notebook", "status" : "A", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ { "warehouse" : "C", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c1"), "item" : "paper", "status" : "D", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ { "warehouse" : "A", "qty" : 60 } ] }
+
+> db.inventory.find({"status":{$ne:"D"}})
+{ "_id" : ObjectId("5a6232e2691f1de4b36468bf"), "item" : "journal", "status" : "A", "size" : { "h" : 14, "w" : 21, "uom" : "cm" }, "instock" : [ { "warehouse" : "A", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c0"), "item" : "notebook", "status" : "A", "size" : { "h" : 8.5, "w" : 11, "uom" : "in" }, "instock" : [ { "warehouse" : "C", "qty" : 5 } ] }
+{ "_id" : ObjectId("5a6232e2691f1de4b36468c3"), "item" : "postcard", "status" : "A", "size" : { "h" : 10, "w" : 15.25, "uom" : "cm" }, "instock" : [ { "warehouse" : "B", "qty" : 15 }, { "warehouse" : "C", "qty" : 35 } ] }
+
+db.inventory.update({ tags: { $in: ["appliances", "school"] } })
+
+db.inventory.find( { qty: { $nin: [ 5, 15 ] } } )
