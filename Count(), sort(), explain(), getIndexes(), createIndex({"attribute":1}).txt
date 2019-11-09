@@ -1260,6 +1260,7 @@ HAVING NO INDEX
         },
         "ok" : 1
 }
+-------------------------------------------------------------------------------------------------------------
 > db.rest.find({"address.zipcode":{$gt:"11000"}}).sort({"building":1}).explain("executionStats")
 {
         "queryPlanner" : {
