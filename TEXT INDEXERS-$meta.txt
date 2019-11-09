@@ -100,7 +100,7 @@ CAPITALIZING
 { "_id" : ObjectId("5a74acc9272bba41ab026676"), "word" : "tom has tail" }
 { "_id" : ObjectId("5a74ad17272bba41ab02667d"), "word" : "Jerry has tail" }
 -------------------------------------------------------------------------------------------------
-TEXT INDEX AND FINDING THE BEST MATCH BY A NEW ATTRIBUTE
+TEXT INDEX AND FINDING THE BEST MATCH BY A NEW ATTRIBUTE : match percentige will be found by-> $meta
 --------------------------------------------------------------------------------------------------
 > db.textind.find({$text:{$search:"tom has tail"}},{score:{$meta:"textScore"}}).sort({score:{$meta:"textScore"}})
 { "_id" : ObjectId("5a74acc9272bba41ab026676"), "word" : "tom has tail", "score" : 1.5 }
